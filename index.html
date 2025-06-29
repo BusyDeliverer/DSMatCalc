@@ -115,7 +115,12 @@
             Calculate Units
         </button>
 
-        <!-- Moved and redesigned results section -->
+        <!-- Placeholder for results when no results are shown -->
+        <div id="results-placeholder" class="mt-8 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center text-gray-500 italic hidden">
+            Enter amounts and click "Calculate Units" to see the breakdown.
+        </div>
+
+        <!-- Redesigned results section -->
         <div id="results-container" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div id="resinsResult" class="bg-blue-50 p-4 rounded-lg border border-blue-200 hidden"></div>
             <div id="metalsResult" class="bg-green-50 p-4 rounded-lg border border-green-200 hidden"></div>
@@ -285,6 +290,9 @@
                 div.innerHTML = ''; // Clear content
                 div.classList.add('hidden'); // Hide the div
             });
+
+            // Show placeholder when results are cleared
+            document.getElementById('results-placeholder').classList.remove('hidden');
         }
 
         // --- Modal for adding amount ---
@@ -382,10 +390,13 @@
             const chemicalsCalc = calculateUnits(chemicalsInput, unitSizes.chemicals);
             const specialAlloysCalc = calculateUnits(specialAlloysInput, unitSizes.specialAlloys);
 
+            let hasAnyResults = false; // Flag to track if any results are displayed
+
             // Display Chiral Crystals directly
             if (chiralCrystalsInput > 0) {
                 chiralCrystalsResultDiv.innerHTML = formatResults("Chiral Crystals", { totalAmount: chiralCrystalsInput });
                 chiralCrystalsResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
             }
 
 
@@ -394,28 +405,36 @@
             if (resinsInput > 0 || resinsCalc.wasted > 0) {
                 resinsResultDiv.innerHTML = formatResults("Resins", resinsCalc);
                 resinsResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
             }
             if (metalsInput > 0 || metalsCalc.wasted > 0) {
                 metalsResultDiv.innerHTML = formatResults("Metals", metalsCalc);
                 metalsResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
             }
             if (ceramicsInput > 0 || ceramicsCalc.wasted > 0) {
                 ceramicsResultDiv.innerHTML = formatResults("Ceramics", ceramicsCalc);
                 ceramicsResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
             }
             if (chemicalsInput > 0 || chemicalsCalc.wasted > 0) {
                 chemicalsResultDiv.innerHTML = formatResults("Chemicals", chemicalsCalc);
                 chemicalsResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
             }
             if (specialAlloysInput > 0 || specialAlloysCalc.wasted > 0) {
                 specialAlloysResultDiv.innerHTML = formatResults("Special Alloys", specialAlloysCalc);
                 specialAlloysResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
             }
 
 
-            // If no input was provided for any field, show a message
-            if (resinsInput === 0 && metalsInput === 0 && ceramicsInput === 0 && chemicalsInput === 0 && specialAlloysInput === 0 && chiralCrystalsInput === 0) {
-                showModalMessage("Please enter an amount for at least one material to calculate units.");
+            // Hide placeholder if results are being shown, otherwise show it if no results
+            if (hasAnyResults) {
+                document.getElementById('results-placeholder').classList.add('hidden');
+            } else {
+                document.getElementById('results-placeholder').classList.remove('hidden');
+                showModalMessage("Please enter an amount for at least one material to calculate units."); // Show message if no results and all inputs are zero
             }
 
             // Scroll to the results container after calculation
@@ -424,6 +443,11 @@
 
         // Event listener for the new reset button
         document.getElementById('resetBtn').addEventListener('click', resetCalculator);
+
+        // Initially show the placeholder on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('results-placeholder').classList.remove('hidden');
+        });
     </script>
 </body>
 </html>
