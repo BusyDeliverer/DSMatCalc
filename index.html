@@ -38,37 +38,67 @@
             <!-- Resins Input -->
             <div class="flex flex-col">
                 <label for="resins" class="text-lg font-medium text-gray-700 mb-2">Total Resins Needed:</label>
-                <input type="number" id="resins" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                <div class="flex items-center gap-2">
+                    <input type="number" id="resins" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resins">
+                        +
+                    </button>
+                </div>
             </div>
 
             <!-- Metals Input -->
             <div class="flex flex-col">
                 <label for="metals" class="text-lg font-medium text-gray-700 mb-2">Total Metals Needed:</label>
-                <input type="number" id="metals" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                <div class="flex items-center gap-2">
+                    <input type="number" id="metals" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metals">
+                        +
+                    </button>
+                </div>
             </div>
 
             <!-- Ceramics Input -->
             <div class="flex flex-col">
                 <label for="ceramics" class="text-lg font-medium text-gray-700 mb-2">Total Ceramics Needed:</label>
-                <input type="number" id="ceramics" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                <div class="flex items-center gap-2">
+                    <input type="number" id="ceramics" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramics">
+                        +
+                    </button>
+                </div>
             </div>
 
             <!-- Chemicals Input -->
             <div class="flex flex-col">
                 <label for="chemicals" class="text-lg font-medium text-gray-700 mb-2">Total Chemicals Needed:</label>
-                <input type="number" id="chemicals" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                <div class="flex items-center gap-2">
+                    <input type="number" id="chemicals" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicals">
+                        +
+                    </button>
+                </div>
             </div>
 
             <!-- Special Alloys Input -->
             <div class="flex flex-col">
                 <label for="specialAlloys" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
-                <input type="number" id="specialAlloys" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                <div class="flex items-center gap-2">
+                    <input type="number" id="specialAlloys" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloys">
+                        +
+                    </button>
+                </div>
             </div>
 
             <!-- Chiral Crystals Input -->
             <div class="flex flex-col">
                 <label for="chiralCrystals" class="text-lg font-medium text-gray-700 mb-2">Total Chiral Crystals Needed:</label>
-                <input type="number" id="chiralCrystals" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                <div class="flex items-center gap-2">
+                    <input type="number" id="chiralCrystals" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystals">
+                        +
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -92,10 +122,22 @@
         </div>
 
         <!-- Custom Modal for Messages -->
-        <div id="messageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+        <div id="messageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
                 <p id="modalMessage" class="text-gray-800 text-lg mb-4"></p>
                 <button id="modalCloseBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md">OK</button>
+            </div>
+        </div>
+
+        <!-- Add Amount Modal -->
+        <div id="addAmountModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Add Amount</h3>
+                <input type="number" id="amountToAddInput" placeholder="Enter amount to add" class="p-3 border border-gray-300 rounded-lg w-full mb-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent" min="0">
+                <div class="flex justify-end gap-2">
+                    <button id="cancelAddAmountBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md">Cancel</button>
+                    <button id="confirmAddAmountBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">Add</button>
+                </div>
             </div>
         </div>
     </div>
@@ -229,6 +271,73 @@
                 div.classList.add('hidden'); // Hide the div
             });
         }
+
+        // --- Modal for adding amount ---
+        const addAmountModal = document.getElementById('addAmountModal');
+        const amountToAddInput = document.getElementById('amountToAddInput');
+        const confirmAddAmountBtn = document.getElementById('confirmAddAmountBtn');
+        const cancelAddAmountBtn = document.getElementById('cancelAddAmountBtn');
+        let currentTargetInputId = null; // To keep track of which input field the modal is for
+
+        // Function to open the add amount modal
+        function openAddAmountModal(targetInputId) {
+            currentTargetInputId = targetInputId;
+            amountToAddInput.value = ''; // Clear previous input
+            addAmountModal.classList.remove('hidden');
+            amountToAddInput.focus();
+        }
+
+        // Function to close the add amount modal
+        function closeAddAmountModal() {
+            addAmountModal.classList.add('hidden');
+            currentTargetInputId = null;
+        }
+
+        // Event listener for confirming amount addition
+        confirmAddAmountBtn.addEventListener('click', () => {
+            if (currentTargetInputId) {
+                const amount = parseInt(amountToAddInput.value) || 0;
+                const targetInput = document.getElementById(currentTargetInputId);
+                const currentValue = parseInt(targetInput.value) || 0;
+                targetInput.value = currentValue + amount;
+            }
+            closeAddAmountModal();
+        });
+
+        // Event listener for canceling amount addition
+        cancelAddAmountBtn.addEventListener('click', closeAddAmountModal);
+
+        // Event listeners for all plus buttons
+        document.querySelectorAll('.plus-btn').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const targetInputId = event.target.dataset.targetInput;
+                openAddAmountModal(targetInputId);
+            });
+        });
+
+        // Keyboard shortcuts for the add amount modal
+        amountToAddInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default form submission if any
+                confirmAddAmountBtn.click(); // Simulate click on confirm button
+            }
+        });
+
+        addAmountModal.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                event.preventDefault(); // Prevent default browser actions
+                cancelAddAmountBtn.click(); // Simulate click on cancel button
+            }
+        });
+
+        // Keyboard shortcut for reset (pressing 'R')
+        document.addEventListener('keydown', (event) => {
+            // Check if the key is 'R' or 'r' and if no modal is currently open
+            if (event.key.toLowerCase() === 'r' && addAmountModal.classList.contains('hidden') && messageModal.classList.contains('hidden')) {
+                event.preventDefault(); // Prevent default browser action (e.g., refreshing page if 'r' is part of a shortcut)
+                resetCalculator();
+            }
+        });
 
 
         // Main calculation function
