@@ -1,7 +1,3 @@
-Excellent! It's always a good idea to keep the documentation updated with the latest features. Based on all the changes we've made, here is a completely revised `README.md` file that accurately reflects the current state of your application.
-
----
-
 # Death Stranding Material Unit Calculator
 
 > A simple and intuitive web-based tool designed to help Porters in Death Stranding manage multiple construction projects, calculate material requirements, and track inventory with ease.
