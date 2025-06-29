@@ -130,8 +130,11 @@
         <!-- Sidebar for Projects -->
         <div id="sidebar" class="fixed inset-y-0 left-0 z-30 w-72 bg-gray-50 p-6 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:w-1/4 md:translate-x-0 md:border-r border-gray-200">
             <h2 class="text-2xl font-bold text-gray-800 mb-4">Projects</h2>
-            <button id="addProjectBtn" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out mb-4">
+            <button id="addProjectBtn" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out mb-2">
                 + Add
+            </button>
+            <button id="clearAllBtn" class="w-full bg-red-100 hover:bg-red-200 text-red-800 font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out mb-4">
+                Clear All
             </button>
             <div id="projectTabsContainer" class="flex-grow">
                 <!-- Project buttons will be rendered here by JavaScript -->
@@ -301,6 +304,15 @@
             </div>
         </div>
     </div>
+     <div id="clearAllModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <p class="text-gray-800 text-lg mb-4">Are you sure you want to delete all projects? This action cannot be undone.</p>
+            <div class="flex justify-center gap-4">
+                <button id="confirmClearAllBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md">Yes, Clear All</button>
+                <button id="cancelClearAllBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div id="addAmountModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Add Amount</h3>
@@ -334,7 +346,7 @@
                 resinsHave: 0, metalsHave: 0, ceramicsHave: 0,
                 chemicalsHave: 0, specialAlloysHave: 0, chiralCrystalsHave: 0,
             },
-            activeProjectIndex: 0,
+            activeProjectIndex: -1,
             projectToRenameIndex: null,
             projectToDeleteIndex: null,
         };
@@ -455,18 +467,33 @@
         function showCalculatorView() {
             document.getElementById('calculator-view').classList.remove('hidden');
             document.getElementById('empty-state-view').classList.add('hidden');
-            document.getElementById('finishedBtn').disabled = false;
-            document.getElementById('resetBtn').disabled = false;
         }
 
         function showEmptyStateView() {
             document.getElementById('calculator-view').classList.add('hidden');
             document.getElementById('empty-state-view').classList.remove('hidden');
-            document.getElementById('finishedBtn').disabled = true;
-            document.getElementById('resetBtn').disabled = true;
+        }
+        
+        function updateLayoutForProjectsState() {
+            const sidebar = document.getElementById('sidebar');
+            const menuToggle = document.getElementById('menu-toggle');
+            const mainContent = document.getElementById('main-content');
+
+            if (appState.projects.length === 0) {
+                sidebar.classList.add('hidden');
+                menuToggle.classList.add('hidden');
+                mainContent.classList.remove('md:w-3/4');
+                mainContent.classList.add('w-full');
+            } else {
+                sidebar.classList.remove('hidden');
+                menuToggle.classList.remove('hidden');
+                mainContent.classList.add('md:w-3/4');
+                mainContent.classList.remove('w-full');
+            }
         }
 
         function renderTabs() {
+            updateLayoutForProjectsState();
             const tabContainer = document.getElementById('projectTabsContainer');
             tabContainer.innerHTML = '';
             appState.projects.forEach((project, index) => {
@@ -507,6 +534,7 @@
                 container.appendChild(buttonsWrapper);
                 tabContainer.appendChild(container);
             });
+            document.getElementById('clearAllBtn').disabled = appState.projects.length === 0;
         }
         
         function clearResults() {
@@ -524,7 +552,7 @@
             if (appState.projects.length === 0) {
                 appState.activeProjectIndex = -1;
                 showEmptyStateView();
-                renderTabs(); // Clear sidebar
+                renderTabs(); // Clear sidebar and update layout
                 return;
             }
             
@@ -593,6 +621,10 @@
         const deleteProjectMessage = document.getElementById('deleteProjectMessage');
         const confirmDeleteProjectBtn = document.getElementById('confirmDeleteProjectBtn');
         const cancelDeleteProjectBtn = document.getElementById('cancelDeleteProjectBtn');
+        
+        const clearAllModal = document.getElementById('clearAllModal');
+        const confirmClearAllBtn = document.getElementById('confirmClearAllBtn');
+        const cancelClearAllBtn = document.getElementById('cancelClearAllBtn');
 
         const confirmFinishedModal = document.getElementById('confirmFinishedModal');
         const deleteAfterFinishCheckbox = document.getElementById('deleteAfterFinishCheckbox');
@@ -635,6 +667,13 @@
             confirmFinishedModal.classList.remove('hidden');
         }
         function closeFinishProjectModal() { confirmFinishedModal.classList.add('hidden'); }
+        
+        function openClearAllModal() {
+            clearAllModal.classList.remove('hidden');
+        }
+        function closeClearAllModal() {
+            clearAllModal.classList.add('hidden');
+        }
 
 
         confirmAddProjectBtn.addEventListener('click', () => {
@@ -707,6 +746,15 @@
         cancelRenameProjectBtn.addEventListener('click', closeRenameProjectModal);
         cancelDeleteProjectBtn.addEventListener('click', closeDeleteProjectModal);
         confirmFinishedNoBtn.addEventListener('click', closeFinishProjectModal);
+        
+        confirmClearAllBtn.addEventListener('click', () => {
+            appState.projects = [];
+            appState.activeProjectIndex = -1;
+            saveAppState();
+            switchProject(appState.activeProjectIndex);
+            closeClearAllModal();
+        });
+        cancelClearAllBtn.addEventListener('click', closeClearAllModal);
 
         addProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmAddProjectBtn.click(); if (e.key === 'Escape') cancelAddProjectBtn.click(); });
         renameProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmRenameProjectBtn.click(); if (e.key === 'Escape') cancelRenameProjectBtn.click(); });
@@ -763,6 +811,7 @@
             sidebarOverlay.addEventListener('click', closeSidebar);
 
             document.getElementById('addProjectBtn').addEventListener('click', openAddProjectModal);
+            document.getElementById('clearAllBtn').addEventListener('click', openClearAllModal);
             document.getElementById('finishedBtn').addEventListener('click', openFinishProjectModal);
             document.getElementById('calculateBtn').addEventListener('click', () => {
                 const materials = getMaterialInputs();
