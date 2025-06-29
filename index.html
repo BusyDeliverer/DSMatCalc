@@ -73,6 +73,10 @@
             cursor: pointer;
             padding: 0;
             font-weight: 500;
+            /* Added for truncation */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .sidebar-button-container.active .sidebar-button-name {
             color: white;
@@ -475,6 +479,7 @@
                 const nameButton = document.createElement('button');
                 nameButton.textContent = project.name;
                 nameButton.className = 'sidebar-button-name';
+                nameButton.title = project.name; // Add title for tooltip
                 nameButton.onclick = () => switchProject(index);
                 
                 const buttonsWrapper = document.createElement('div');
@@ -657,8 +662,10 @@
             if (indexToDelete === null) return;
             
             appState.projects.splice(indexToDelete, 1);
-            if (appState.activeProjectIndex >= indexToDelete) {
-                appState.activeProjectIndex = Math.max(0, appState.activeProjectIndex - 1);
+            if (appState.activeProjectIndex >= indexToDelete && appState.activeProjectIndex > 0) {
+                appState.activeProjectIndex = appState.activeProjectIndex - 1;
+            } else if (appState.projects.length === 0) {
+                appState.activeProjectIndex = -1;
             }
             
             closeDeleteProjectModal();
@@ -681,8 +688,10 @@
 
             if (shouldDelete) {
                  appState.projects.splice(projectIndexToFinish, 1);
-                 if (appState.activeProjectIndex >= projectIndexToFinish) {
-                     appState.activeProjectIndex = Math.max(0, appState.activeProjectIndex - 1);
+                 if (appState.activeProjectIndex >= projectIndexToFinish && appState.activeProjectIndex > 0) {
+                     appState.activeProjectIndex = appState.activeProjectIndex - 1;
+                 } else if (appState.projects.length === 0) {
+                    appState.activeProjectIndex = -1;
                  }
             } else {
                  Object.keys(project.materials).forEach(key => project.materials[key] = 0);
