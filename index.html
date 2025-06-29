@@ -60,9 +60,15 @@
             </div>
 
             <!-- Special Alloys Input -->
-            <div class="flex flex-col md:col-span-2">
+            <div class="flex flex-col">
                 <label for="specialAlloys" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
                 <input type="number" id="specialAlloys" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+            </div>
+
+            <!-- Chyral Crystals Input -->
+            <div class="flex flex-col">
+                <label for="chyralCrystals" class="text-lg font-medium text-gray-700 mb-2">Total Chyral Crystals Needed:</label>
+                <input type="number" id="chyralCrystals" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
             </div>
         </div>
 
@@ -82,6 +88,7 @@
             <div id="ceramicsResult" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 hidden"></div>
             <div id="chemicalsResult" class="bg-purple-50 p-4 rounded-lg border border-purple-200 hidden"></div>
             <div id="specialAlloysResult" class="bg-red-50 p-4 rounded-lg border border-red-200 hidden"></div>
+            <div id="chyralCrystalsResult" class="bg-gray-50 p-4 rounded-lg border border-gray-200 hidden"></div>
         </div>
 
         <!-- Custom Modal for Messages -->
@@ -146,7 +153,7 @@
                 wasted = 0;
             }
 
-            return { units: unitsBreakdown, wasted: wasted };
+            return { units: unitsBreakdown, wasted: wasted, totalProvided: currentTotalProvided };
         }
 
         // Function to format the results for display
@@ -160,6 +167,14 @@
                 "Special Alloys": "specialAlloys"
             };
             const materialKey = keyMap[materialDisplayName]; // Get the correct key
+
+            // Special handling for Chyral Crystals as they don't have unit sizes
+            if (materialDisplayName === "Chyral Crystals") {
+                let output = `<p class="text-lg font-semibold text-gray-800">Chyral Crystals Needed:</p>`;
+                output += `<p class="text-gray-700 ml-4">${result.totalAmount} units</p>`;
+                return output;
+            }
+
 
             if (!materialKey || !unitSizes[materialKey]) {
                 console.error(`Invalid material name or missing unit sizes: ${materialDisplayName}`);
@@ -198,13 +213,15 @@
             document.getElementById('ceramics').value = '';
             document.getElementById('chemicals').value = '';
             document.getElementById('specialAlloys').value = '';
+            document.getElementById('chyralCrystals').value = ''; // Reset Chyral Crystals input
 
             const resultDivs = [
                 document.getElementById('resinsResult'),
                 document.getElementById('metalsResult'),
                 document.getElementById('ceramicsResult'),
                 document.getElementById('chemicalsResult'),
-                document.getElementById('specialAlloysResult')
+                document.getElementById('specialAlloysResult'),
+                document.getElementById('chyralCrystalsResult') // Reset Chyral Crystals result div
             ];
 
             resultDivs.forEach(div => {
@@ -221,6 +238,7 @@
             const ceramicsInput = parseInt(document.getElementById('ceramics').value) || 0;
             const chemicalsInput = parseInt(document.getElementById('chemicals').value) || 0;
             const specialAlloysInput = parseInt(document.getElementById('specialAlloys').value) || 0;
+            const chyralCrystalsInput = parseInt(document.getElementById('chyralCrystals').value) || 0; // Get Chyral Crystals input
 
             // Get result display elements
             const resinsResultDiv = document.getElementById('resinsResult');
@@ -228,9 +246,10 @@
             const ceramicsResultDiv = document.getElementById('ceramicsResult');
             const chemicalsResultDiv = document.getElementById('chemicalsResult');
             const specialAlloysResultDiv = document.getElementById('specialAlloysResult');
+            const chyralCrystalsResultDiv = document.getElementById('chyralCrystalsResult'); // Get Chyral Crystals result div
 
             // Hide all results initially
-            [resinsResultDiv, metalsResultDiv, ceramicsResultDiv, chemicalsResultDiv, specialAlloysResultDiv].forEach(div => div.classList.add('hidden'));
+            [resinsResultDiv, metalsResultDiv, ceramicsResultDiv, chemicalsResultDiv, specialAlloysResultDiv, chyralCrystalsResultDiv].forEach(div => div.classList.add('hidden'));
 
             // Perform calculations
             const resinsCalc = calculateUnits(resinsInput, unitSizes.resins);
@@ -238,6 +257,13 @@
             const ceramicsCalc = calculateUnits(ceramicsInput, unitSizes.ceramics);
             const chemicalsCalc = calculateUnits(chemicalsInput, unitSizes.chemicals);
             const specialAlloysCalc = calculateUnits(specialAlloysInput, unitSizes.specialAlloys);
+
+            // Display Chyral Crystals directly
+            if (chyralCrystalsInput > 0) {
+                chyralCrystalsResultDiv.innerHTML = formatResults("Chyral Crystals", { totalAmount: chyralCrystalsInput });
+                chyralCrystalsResultDiv.classList.remove('hidden');
+            }
+
 
             // Display results for each material if input > 0 or if there's a wasted amount
             // The condition now checks if there was any input or if any waste occurred, implying a calculation was made.
@@ -262,8 +288,9 @@
                 specialAlloysResultDiv.classList.remove('hidden');
             }
 
+
             // If no input was provided for any field, show a message
-            if (resinsInput === 0 && metalsInput === 0 && ceramicsInput === 0 && chemicalsInput === 0 && specialAlloysInput === 0) {
+            if (resinsInput === 0 && metalsInput === 0 && ceramicsInput === 0 && chemicalsInput === 0 && specialAlloysInput === 0 && chyralCrystalsInput === 0) {
                 showModalMessage("Please enter an amount for at least one material to calculate units.");
             }
         });
