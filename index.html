@@ -42,7 +42,7 @@
             white-space: nowrap;
             margin: 0 2px;
         }
-        /* New styles for the sidebar project buttons */
+        /* Styles for the sidebar project buttons */
         .sidebar-button {
             padding: 0.75rem 1rem;
             border-radius: 0.5rem;
@@ -51,7 +51,6 @@
             font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-            margin-bottom: 0.5rem;
             border: 1px solid transparent;
             background-color: transparent; /* Inactive state */
             color: #374151; /* gray-700 */
@@ -63,6 +62,25 @@
         }
         .sidebar-button:hover:not(.active) {
             background-color: #e5e7eb; /* gray-200 */
+        }
+        .rename-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 0.25rem;
+            color: #9ca3af; /* gray-400 */
+        }
+        .rename-btn:hover {
+            background-color: #d1d5db; /* gray-300 */
+            color: #1f2937; /* gray-800 */
+        }
+        .sidebar-button.active .rename-btn {
+            color: #bfdbfe; /* blue-200 */
+        }
+         .sidebar-button.active .rename-btn:hover {
+            background-color: #60a5fa; /* blue-400 */
+            color: white;
         }
     </style>
 </head>
@@ -219,6 +237,16 @@
             </div>
         </div>
     </div>
+    <div id="renameProjectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Rename Project</h3>
+            <input type="text" id="renameProjectInput" placeholder="Enter new project name" class="p-3 border border-gray-300 rounded-lg w-full mb-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            <div class="flex justify-end gap-2">
+                <button id="cancelRenameProjectBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md">Cancel</button>
+                <button id="confirmRenameProjectBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md">Save</button>
+            </div>
+        </div>
+    </div>
     <div id="addAmountModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Add Amount</h3>
@@ -248,6 +276,7 @@
                 chemicalsHave: 0, specialAlloysHave: 0, chiralCrystalsHave: 0,
             },
             activeProjectIndex: 0,
+            projectToRenameIndex: null, // To track which project is being renamed
         };
         
         // Helper function to convert display names to camelCase for use as keys/IDs
@@ -366,15 +395,28 @@
             const tabContainer = document.getElementById('projectTabsContainer');
             tabContainer.innerHTML = '';
             appState.projects.forEach((project, index) => {
-                const button = document.createElement('button');
-                button.textContent = project.name;
-                button.classList.add('sidebar-button');
+                const container = document.createElement('div');
+                container.className = 'flex justify-between items-center sidebar-button';
                 if (index === appState.activeProjectIndex) {
-                    button.classList.add('active');
+                    container.classList.add('active');
                 }
-                button.dataset.index = index;
-                button.addEventListener('click', () => switchProject(index));
-                tabContainer.appendChild(button);
+                
+                const nameButton = document.createElement('button');
+                nameButton.textContent = project.name;
+                nameButton.className = 'flex-grow text-left';
+                nameButton.onclick = () => switchProject(index);
+                
+                const renameButton = document.createElement('button');
+                renameButton.className = 'rename-btn flex-shrink-0 ml-2';
+                renameButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
+                renameButton.onclick = (e) => {
+                    e.stopPropagation(); // prevent switchProject from firing
+                    openRenameProjectModal(index);
+                };
+
+                container.appendChild(nameButton);
+                container.appendChild(renameButton);
+                tabContainer.appendChild(container);
             });
         }
         
@@ -383,7 +425,6 @@
             resultsContainer.classList.add('hidden');
             const placeholder = document.getElementById('results-placeholder');
             placeholder.classList.remove('hidden');
-            // Clear individual result divs
             const resultDivs = resultsContainer.querySelectorAll('div[id$="Result"]');
             resultDivs.forEach(div => {
                 div.innerHTML = '';
@@ -441,6 +482,11 @@
         const confirmAddProjectBtn = document.getElementById('confirmAddProjectBtn');
         const cancelAddProjectBtn = document.getElementById('cancelAddProjectBtn');
 
+        const renameProjectModal = document.getElementById('renameProjectModal');
+        const renameProjectInput = document.getElementById('renameProjectInput');
+        const confirmRenameProjectBtn = document.getElementById('confirmRenameProjectBtn');
+        const cancelRenameProjectBtn = document.getElementById('cancelRenameProjectBtn');
+
         function openAddProjectModal() {
             projectNameInput.value = `Project ${appState.projects.length + 1}`;
             addProjectModal.classList.remove('hidden');
@@ -449,6 +495,19 @@
         }
 
         function closeAddProjectModal() { addProjectModal.classList.add('hidden'); }
+
+        function openRenameProjectModal(index) {
+            appState.projectToRenameIndex = index;
+            renameProjectInput.value = appState.projects[index].name;
+            renameProjectModal.classList.remove('hidden');
+            renameProjectInput.focus();
+            renameProjectInput.select();
+        }
+
+        function closeRenameProjectModal() {
+            renameProjectModal.classList.add('hidden');
+            appState.projectToRenameIndex = null;
+        }
 
         confirmAddProjectBtn.addEventListener('click', () => {
             const newProjectName = projectNameInput.value.trim();
@@ -461,10 +520,28 @@
             }
         });
 
+        confirmRenameProjectBtn.addEventListener('click', () => {
+            const newName = renameProjectInput.value.trim();
+            if (newName && appState.projectToRenameIndex !== null) {
+                appState.projects[appState.projectToRenameIndex].name = newName;
+                saveAppState();
+                renderTabs();
+                closeRenameProjectModal();
+            } else {
+                 showModalMessage("Project name cannot be empty.");
+            }
+        });
+
         cancelAddProjectBtn.addEventListener('click', closeAddProjectModal);
+        cancelRenameProjectBtn.addEventListener('click', closeRenameProjectModal);
+
         addProjectModal.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') confirmAddProjectBtn.click();
             if (e.key === 'Escape') cancelAddProjectBtn.click();
+        });
+        renameProjectModal.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') confirmRenameProjectBtn.click();
+            if (e.key === 'Escape') cancelRenameProjectBtn.click();
         });
 
         const addAmountModal = document.getElementById('addAmountModal');
@@ -531,7 +608,6 @@
                 const placeholder = document.getElementById('results-placeholder');
                 let hasAnyResults = false;
                 
-                // Clear and hide all previous result contents before recalculating
                 resultsContainer.querySelectorAll('div[id$="Result"]').forEach(div => {
                     div.innerHTML = '';
                     div.classList.add('hidden');
@@ -545,7 +621,7 @@
 
                     if (!resultDiv) {
                         console.error(`Could not find result div with ID: ${resultDivId}`);
-                        return; // Exit if the div isn't found
+                        return;
                     }
 
                     if (totalNeeded > 0) {
