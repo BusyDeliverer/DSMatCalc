@@ -50,61 +50,109 @@
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Material Unit Calculator</h1>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Resins Inputs -->
             <div class="flex flex-col">
-                <label for="resins" class="text-lg font-medium text-gray-700 mb-2">Total Resins Needed:</label>
+                <label for="resinsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Resins Needed:</label>
+                <div class="flex items-center gap-2 mb-2">
+                    <input type="number" id="resinsNeeded" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resinsNeeded">
+                        +
+                    </button>
+                </div>
+                <label for="resinsHave" class="text-lg font-medium text-gray-700 mb-2">Resins You Have:</label>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="resins" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resins">
+                    <input type="number" id="resinsHave" placeholder="e.g., 50" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resinsHave">
                         +
                     </button>
                 </div>
             </div>
 
+            <!-- Metals Inputs -->
             <div class="flex flex-col">
-                <label for="metals" class="text-lg font-medium text-gray-700 mb-2">Total Metals Needed:</label>
+                <label for="metalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Metals Needed:</label>
+                <div class="flex items-center gap-2 mb-2">
+                    <input type="number" id="metalsNeeded" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metalsNeeded">
+                        +
+                    </button>
+                </div>
+                <label for="metalsHave" class="text-lg font-medium text-gray-700 mb-2">Metals You Have:</label>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="metals" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metals">
+                    <input type="number" id="metalsHave" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metalsHave">
                         +
                     </button>
                 </div>
             </div>
 
+            <!-- Ceramics Inputs -->
             <div class="flex flex-col">
-                <label for="ceramics" class="text-lg font-medium text-gray-700 mb-2">Total Ceramics Needed:</label>
+                <label for="ceramicsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Ceramics Needed:</label>
+                <div class="flex items-center gap-2 mb-2">
+                    <input type="number" id="ceramicsNeeded" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramicsNeeded">
+                        +
+                    </button>
+                </div>
+                <label for="ceramicsHave" class="text-lg font-medium text-gray-700 mb-2">Ceramics You Have:</label>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="ceramics" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramics">
+                    <input type="number" id="ceramicsHave" placeholder="e.g., 80" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramicsHave">
                         +
                     </button>
                 </div>
             </div>
 
+            <!-- Chemicals Inputs -->
             <div class="flex flex-col">
-                <label for="chemicals" class="text-lg font-medium text-gray-700 mb-2">Total Chemicals Needed:</label>
+                <label for="chemicalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Chemicals Needed:</label>
+                <div class="flex items-center gap-2 mb-2">
+                    <input type="number" id="chemicalsNeeded" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicalsNeeded">
+                        +
+                    </button>
+                </div>
+                <label for="chemicalsHave" class="text-lg font-medium text-gray-700 mb-2">Chemicals You Have:</label>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="chemicals" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicals">
+                    <input type="number" id="chemicalsHave" placeholder="e.g., 30" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicalsHave">
                         +
                     </button>
                 </div>
             </div>
 
+            <!-- Special Alloys Inputs -->
             <div class="flex flex-col">
-                <label for="specialAlloys" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
+                <label for="specialAlloysNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
+                <div class="flex items-center gap-2 mb-2">
+                    <input type="number" id="specialAlloysNeeded" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloysNeeded">
+                        +
+                    </button>
+                </div>
+                <label for="specialAlloysHave" class="text-lg font-medium text-gray-700 mb-2">Special Alloys You Have:</label>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="specialAlloys" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloys">
+                    <input type="number" id="specialAlloysHave" placeholder="e.g., 120" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloysHave">
                         +
                     </button>
                 </div>
             </div>
 
+            <!-- Chiral Crystals Inputs -->
             <div class="flex flex-col">
-                <label for="chiralCrystals" class="text-lg font-medium text-gray-700 mb-2">Total Chiral Crystals Needed:</label>
+                <label for="chiralCrystalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Chiral Crystals Needed:</label>
+                <div class="flex items-center gap-2 mb-2">
+                    <input type="number" id="chiralCrystalsNeeded" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystalsNeeded">
+                        +
+                    </button>
+                </div>
+                <label for="chiralCrystalsHave" class="text-lg font-medium text-gray-700 mb-2">Chiral Crystals You Have:</label>
                 <div class="flex items-center gap-2">
-                    <input type="number" id="chiralCrystals" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystals">
+                    <input type="number" id="chiralCrystalsHave" placeholder="e.g., 20" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                    <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystalsHave">
                         +
                     </button>
                 </div>
@@ -120,7 +168,7 @@
             Enter amounts and click "Calculate Units" to see the breakdown.
         </div>
 
-        <!-- Redesigned results section -->
+        <!-- Redesigned results section - two-column layout -->
         <div id="results-container" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div id="resinsResult" class="bg-blue-50 p-4 rounded-lg border border-blue-200 hidden"></div>
             <div id="metalsResult" class="bg-green-50 p-4 rounded-lg border border-green-200 hidden"></div>
@@ -130,8 +178,13 @@
             <div id="chiralCrystalsResult" class="bg-gray-50 p-4 rounded-lg border border-gray-200 hidden"></div>
         </div>
 
+        <!-- New Finished Button -->
+        <button id="finishedBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-4 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
+            Project Finished
+        </button>
+
         <button id="resetBtn" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-4 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-75">
-            Reset
+            Reset All
         </button>
 
         <!-- Keyboard Shortcuts Text Below Buttons -->
@@ -143,6 +196,7 @@
             </p>
         </div>
 
+        <!-- Custom Modal for Messages (like "Please enter an amount") -->
         <div id="messageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
                 <p id="modalMessage" class="text-gray-800 text-lg mb-4"></p>
@@ -150,6 +204,7 @@
             </div>
         </div>
 
+        <!-- Add Amount Modal - Simplified for direct addition -->
         <div id="addAmountModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
             <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Add Amount</h3>
@@ -160,6 +215,18 @@
                 </div>
             </div>
         </div>
+
+        <!-- Confirmation Modal for Project Finished -->
+        <div id="confirmFinishedModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                <p class="text-gray-800 text-lg mb-4">Are you sure you want to mark this project as finished? This will reset "Total Needed" and adjust "You Have" amounts.</p>
+                <div class="flex justify-center gap-4">
+                    <button id="confirmFinishedYesBtn" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md">Yes, Finished</button>
+                    <button id="confirmFinishedNoBtn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md">No, Cancel</button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -219,7 +286,7 @@
         }
 
         // Function to format the results for display
-        function formatResults(materialDisplayName, result) {
+        function formatResults(materialDisplayName, totalNeeded, totalHave, netRequired, calcResult) {
             // Map display names to the actual keys in unitSizes to ensure correct lookup
             const keyMap = {
                 "Resins": "resins",
@@ -230,52 +297,93 @@
             };
             const materialKey = keyMap[materialDisplayName]; // Get the correct key
 
-            // Special handling for Chiral Crystals as they don't have unit sizes
+            let output = `<p class="text-lg font-semibold text-gray-800">${materialDisplayName}:</p>`;
+            output += `<p class="text-gray-700 ml-4">Total Needed: ${totalNeeded}</p>`;
+            output += `<p class="text-gray-700 ml-4">You Have: ${totalHave}</p>`;
+            output += `<p class="text-blue-700 ml-4 font-semibold">Net Required: ${netRequired}</p>`;
+
+
+            // Special handling for Chiral Crystals as they don't have unit breakdowns
             if (materialDisplayName === "Chiral Crystals") {
-                let output = `<p class="text-lg font-semibold text-gray-800">Chiral Crystals Needed:</p>`;
-                output += `<p class="text-gray-700 ml-4">${result.totalAmount} units</p>`;
-                return output;
-            }
-
-
-            if (!materialKey || !unitSizes[materialKey]) {
-                console.error(`Invalid material name or missing unit sizes: ${materialDisplayName}`);
-                return `<p class="text-red-600">Error: Could not retrieve unit sizes for ${materialDisplayName}.</p>`;
-            }
-
-            let output = `<p class="text-lg font-semibold text-gray-800">${materialDisplayName} Units:</p>`;
-            let hasUnits = false;
-            // Iterate through the unit sizes defined for the material to ensure order
-            const sizesForMaterial = unitSizes[materialKey]; // Use the correct key here
-
-            for (const size of sizesForMaterial) {
-                const count = result.units[size] || 0; // Get count, default to 0 if not present
-                if (count > 0) {
-                    output += `<p class="text-gray-700 ml-4">${count} x ${size} units</p>`;
-                    hasUnits = true;
+                // No unit breakdown or wasted for Chiral Crystals
+            } else {
+                let hasUnits = false;
+                if (!materialKey || !unitSizes[materialKey]) {
+                    console.error(`Invalid material name or missing unit sizes: ${materialDisplayName}`);
+                    output += `<p class="text-red-600">Error: Could not retrieve unit sizes for breakdown.</p>`;
+                } else {
+                    output += `<p class="text-md font-semibold text-gray-800 ml-4">Unit Breakdown (for Net Required):</p>`;
+                    const sizesForMaterial = unitSizes[materialKey];
+                    for (const size of sizesForMaterial) {
+                        const count = calcResult.units[size] || 0;
+                        if (count > 0) {
+                            output += `<p class="text-gray-700 ml-8">${count} x ${size} units</p>`;
+                            hasUnits = true;
+                        }
+                    }
+                    if (!hasUnits && netRequired > 0) {
+                        output += `<p class="text-gray-700 ml-8">No units needed (or net required is 0).</p>`;
+                    } else if (!hasUnits && netRequired === 0) {
+                         output += `<p class="text-gray-700 ml-8">Net required is 0, no units needed.</p>`;
+                    }
                 }
-            }
 
-            // If no units were calculated and there's no wasted amount (meaning input was 0 or invalid)
-            if (!hasUnits && result.wasted === 0) {
-                output += `<p class="text-gray-700 ml-4">No units needed (or total is 0).</p>`;
-            }
-
-            // Display wasted amount if greater than zero
-            if (result.wasted > 0) {
-                output += `<p class="text-red-600 ml-4 font-semibold">Wasted: ${result.wasted} units (total provided exceeds required amount).</p>`;
+                // Display wasted amount if greater than zero
+                if (calcResult && calcResult.wasted > 0) {
+                    output += `<p class="text-red-600 ml-4 font-semibold">Wasted: ${calcResult.wasted} units (total provided exceeds required amount for Net Required).</p>`;
+                }
             }
             return output;
         }
 
+        // Helper function to get all input elements for materials
+        function getMaterialInputs() {
+            return [
+                { needed: document.getElementById('resinsNeeded'), have: document.getElementById('resinsHave') },
+                { needed: document.getElementById('metalsNeeded'), have: document.getElementById('metalsHave') },
+                { needed: document.getElementById('ceramicsNeeded'), have: document.getElementById('ceramicsHave') },
+                { needed: document.getElementById('chemicalsNeeded'), have: document.getElementById('chemicalsHave') },
+                { needed: document.getElementById('specialAlloysNeeded'), have: document.getElementById('specialAlloysHave') },
+                { needed: document.getElementById('chiralCrystalsNeeded'), have: document.getElementById('chiralCrystalsHave') }
+            ];
+        }
+
+        // Function to save current inventory to local storage
+        function saveInventory() {
+            const inventory = {};
+            getMaterialInputs().forEach(material => {
+                inventory[material.needed.id] = parseInt(material.needed.value) || 0;
+                inventory[material.have.id] = parseInt(material.have.value) || 0;
+            });
+            localStorage.setItem('materialInventory', JSON.stringify(inventory));
+        }
+
+        // Function to load inventory from local storage
+        function loadInventory() {
+            const savedInventory = localStorage.getItem('materialInventory');
+            if (savedInventory) {
+                const inventory = JSON.parse(savedInventory);
+                getMaterialInputs().forEach(material => {
+                    if (inventory[material.needed.id] !== undefined) {
+                        material.needed.value = inventory[material.needed.id];
+                    }
+                    if (inventory[material.have.id] !== undefined) {
+                        material.have.value = inventory[material.have.id];
+                    }
+                });
+            }
+        }
+
+
         // Function to reset all inputs and results
         function resetCalculator() {
-            document.getElementById('resins').value = '';
-            document.getElementById('metals').value = '';
-            document.getElementById('ceramics').value = '';
-            document.getElementById('chemicals').value = '';
-            document.getElementById('specialAlloys').value = '';
-            document.getElementById('chiralCrystals').value = ''; // Reset Chiral Crystals input
+            // Only reset 'needed' fields
+            document.getElementById('resinsNeeded').value = '';
+            document.getElementById('metalsNeeded').value = '';
+            document.getElementById('ceramicsNeeded').value = '';
+            document.getElementById('chemicalsNeeded').value = '';
+            document.getElementById('specialAlloysNeeded').value = '';
+            document.getElementById('chiralCrystalsNeeded').value = '';
 
             const resultDivs = [
                 document.getElementById('resinsResult'),
@@ -283,7 +391,7 @@
                 document.getElementById('ceramicsResult'),
                 document.getElementById('chemicalsResult'),
                 document.getElementById('specialAlloysResult'),
-                document.getElementById('chiralCrystalsResult') // Reset Chiral Crystals result div
+                document.getElementById('chiralCrystalsResult')
             ];
 
             resultDivs.forEach(div => {
@@ -293,6 +401,7 @@
 
             // Show placeholder when results are cleared
             document.getElementById('results-placeholder').classList.remove('hidden');
+            saveInventory(); // Save changes to local storage
         }
 
         // --- Modal for adding amount ---
@@ -323,6 +432,7 @@
                 const targetInput = document.getElementById(currentTargetInputId);
                 const currentValue = parseInt(targetInput.value) || 0;
                 targetInput.value = currentValue + amount;
+                saveInventory(); // Save changes to local storage
             }
             closeAddAmountModal();
         });
@@ -338,26 +448,90 @@
             });
         });
 
+        // Add input event listeners to all needed and have fields for immediate saving
+        getMaterialInputs().forEach(material => {
+            material.needed.addEventListener('input', saveInventory);
+            material.have.addEventListener('input', saveInventory);
+        });
+
+
         // Keyboard shortcuts for the add amount modal
         amountToAddInput.addEventListener('keydown', (event) => {
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent default form submission if any
-                confirmAddAmountBtn.click(); // Simulate click on confirm button
+                event.preventDefault();
+                confirmAddAmountBtn.click();
             }
         });
 
         addAmountModal.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
-                event.preventDefault(); // Prevent default browser actions
-                cancelAddAmountBtn.click(); // Simulate click on cancel button
+                event.preventDefault();
+                cancelAddAmountBtn.click();
             }
         });
 
+        // --- Confirmation Modal for Project Finished ---
+        const confirmFinishedModal = document.getElementById('confirmFinishedModal');
+        const confirmFinishedYesBtn = document.getElementById('confirmFinishedYesBtn');
+        const confirmFinishedNoBtn = document.getElementById('confirmFinishedNoBtn');
+
+        // Function to open confirmation modal
+        function openConfirmFinishedModal() {
+            confirmFinishedModal.classList.remove('hidden');
+        }
+
+        // Function to close confirmation modal
+        function closeConfirmFinishedModal() {
+            confirmFinishedModal.classList.add('hidden');
+        }
+
+        // Event listener for the new "Project Finished" button
+        document.getElementById('finishedBtn').addEventListener('click', openConfirmFinishedModal);
+
+        // Event listener for "Yes, Finished" in confirmation modal
+        confirmFinishedYesBtn.addEventListener('click', () => {
+            const materials = getMaterialInputs();
+
+            materials.forEach(material => {
+                const neededInput = material.needed;
+                const haveInput = material.have;
+
+                const currentNeeded = parseInt(neededInput.value) || 0;
+                const currentHave = parseInt(haveInput.value) || 0;
+
+                // Subtract the total needed amount from 'You Have', ensuring it doesn't go below 0
+                haveInput.value = Math.max(0, currentHave - currentNeeded);
+
+                // Reset 'Total Needed' to 0
+                neededInput.value = 0;
+            });
+
+            // After updating inputs, clear results and show placeholder
+            const resultDivs = [
+                document.getElementById('resinsResult'),
+                document.getElementById('metalsResult'),
+                document.getElementById('ceramicsResult'),
+                document.getElementById('chemicalsResult'),
+                document.getElementById('specialAlloysResult'),
+                document.getElementById('chiralCrystalsResult')
+            ];
+            resultDivs.forEach(div => {
+                div.innerHTML = '';
+                div.classList.add('hidden');
+            });
+            document.getElementById('results-placeholder').classList.remove('hidden');
+            saveInventory(); // Save changes to local storage
+            closeConfirmFinishedModal(); // Close the confirmation modal
+        });
+
+        // Event listener for "No, Cancel" in confirmation modal
+        confirmFinishedNoBtn.addEventListener('click', closeConfirmFinishedModal);
+
+
         // Keyboard shortcut for reset (pressing 'R')
         document.addEventListener('keydown', (event) => {
-            // Check if the key is 'R' or 'r' and if no modal is currently open
-            if (event.key.toLowerCase() === 'r' && addAmountModal.classList.contains('hidden') && messageModal.classList.contains('hidden')) {
-                event.preventDefault(); // Prevent default browser action (e.g., refreshing page if 'r' is part of a shortcut)
+            if (event.key.toLowerCase() === 'r' && addAmountModal.classList.contains('hidden') && messageModal.classList.contains('hidden') && confirmFinishedModal.classList.contains('hidden')) {
+                event.preventDefault();
                 resetCalculator();
             }
         });
@@ -365,12 +539,27 @@
 
         // Main calculation function
         document.getElementById('calculateBtn').addEventListener('click', () => {
-            const resinsInput = parseInt(document.getElementById('resins').value) || 0;
-            const metalsInput = parseInt(document.getElementById('metals').value) || 0;
-            const ceramicsInput = parseInt(document.getElementById('ceramics').value) || 0;
-            const chemicalsInput = parseInt(document.getElementById('chemicals').value) || 0;
-            const specialAlloysInput = parseInt(document.getElementById('specialAlloys').value) || 0;
-            const chiralCrystalsInput = parseInt(document.getElementById('chiralCrystals').value) || 0; // Get Chiral Crystals input
+            // Get "Needed" and "Have" values for all materials
+            const resinsNeeded = parseInt(document.getElementById('resinsNeeded').value) || 0;
+            const resinsHave = parseInt(document.getElementById('resinsHave').value) || 0;
+            const metalsNeeded = parseInt(document.getElementById('metalsNeeded').value) || 0;
+            const metalsHave = parseInt(document.getElementById('metalsHave').value) || 0;
+            const ceramicsNeeded = parseInt(document.getElementById('ceramicsNeeded').value) || 0;
+            const ceramicsHave = parseInt(document.getElementById('ceramicsHave').value) || 0;
+            const chemicalsNeeded = parseInt(document.getElementById('chemicalsNeeded').value) || 0;
+            const chemicalsHave = parseInt(document.getElementById('chemicalsHave').value) || 0;
+            const specialAlloysNeeded = parseInt(document.getElementById('specialAlloysNeeded').value) || 0;
+            const specialAlloysHave = parseInt(document.getElementById('specialAlloysHave').value) || 0;
+            const chiralCrystalsNeeded = parseInt(document.getElementById('chiralCrystalsNeeded').value) || 0;
+            const chiralCrystalsHave = parseInt(document.getElementById('chiralCrystalsHave').value) || 0;
+
+            // Calculate Net Required
+            const netResins = Math.max(0, resinsNeeded - resinsHave);
+            const netMetals = Math.max(0, metalsNeeded - metalsHave);
+            const netCeramics = Math.max(0, ceramicsNeeded - ceramicsHave);
+            const netChemicals = Math.max(0, chemicalsNeeded - chemicalsHave);
+            const netSpecialAlloys = Math.max(0, specialAlloysNeeded - specialAlloysHave);
+            const netChiralCrystals = Math.max(0, chiralCrystalsNeeded - chiralCrystalsHave);
 
             // Get result display elements
             const resinsResultDiv = document.getElementById('resinsResult');
@@ -378,74 +567,72 @@
             const ceramicsResultDiv = document.getElementById('ceramicsResult');
             const chemicalsResultDiv = document.getElementById('chemicalsResult');
             const specialAlloysResultDiv = document.getElementById('specialAlloysResult');
-            const chiralCrystalsResultDiv = document.getElementById('chiralCrystalsResult'); // Get Chiral Crystals result div
+            const chiralCrystalsResultDiv = document.getElementById('chiralCrystalsResult');
 
             // Hide all results initially
             [resinsResultDiv, metalsResultDiv, ceramicsResultDiv, chemicalsResultDiv, specialAlloysResultDiv, chiralCrystalsResultDiv].forEach(div => div.classList.add('hidden'));
 
-            // Perform calculations
-            const resinsCalc = calculateUnits(resinsInput, unitSizes.resins);
-            const metalsCalc = calculateUnits(metalsInput, unitSizes.metals);
-            const ceramicsCalc = calculateUnits(ceramicsInput, unitSizes.ceramics);
-            const chemicalsCalc = calculateUnits(chemicalsInput, unitSizes.chemicals);
-            const specialAlloysCalc = calculateUnits(specialAlloysInput, unitSizes.specialAlloys);
-
             let hasAnyResults = false; // Flag to track if any results are displayed
 
-            // Display Chiral Crystals directly
-            if (chiralCrystalsInput > 0) {
-                chiralCrystalsResultDiv.innerHTML = formatResults("Chiral Crystals", { totalAmount: chiralCrystalsInput });
-                chiralCrystalsResultDiv.classList.remove('hidden');
-                hasAnyResults = true;
-            }
-
-
-            // Display results for each material if input > 0 or if there's a wasted amount
-            // The condition now checks if there was any input or if any waste occurred, implying a calculation was made.
-            if (resinsInput > 0 || resinsCalc.wasted > 0) {
-                resinsResultDiv.innerHTML = formatResults("Resins", resinsCalc);
+            // Perform calculations and display results for each material if net required > 0 or total needed > 0
+            if (netResins > 0 || resinsNeeded > 0) { // Display if needed or net required
+                const resinsCalc = calculateUnits(netResins, unitSizes.resins);
+                resinsResultDiv.innerHTML = formatResults("Resins", resinsNeeded, resinsHave, netResins, resinsCalc);
                 resinsResultDiv.classList.remove('hidden');
                 hasAnyResults = true;
             }
-            if (metalsInput > 0 || metalsCalc.wasted > 0) {
-                metalsResultDiv.innerHTML = formatResults("Metals", metalsCalc);
+            if (netMetals > 0 || metalsNeeded > 0) {
+                const metalsCalc = calculateUnits(netMetals, unitSizes.metals);
+                metalsResultDiv.innerHTML = formatResults("Metals", metalsNeeded, metalsHave, netMetals, metalsCalc);
                 metalsResultDiv.classList.remove('hidden');
                 hasAnyResults = true;
             }
-            if (ceramicsInput > 0 || ceramicsCalc.wasted > 0) {
-                ceramicsResultDiv.innerHTML = formatResults("Ceramics", ceramicsCalc);
+            if (netCeramics > 0 || ceramicsNeeded > 0) {
+                const ceramicsCalc = calculateUnits(netCeramics, unitSizes.ceramics);
+                ceramicsResultDiv.innerHTML = formatResults("Ceramics", ceramicsNeeded, ceramicsHave, netCeramics, ceramicsCalc);
                 ceramicsResultDiv.classList.remove('hidden');
                 hasAnyResults = true;
             }
-            if (chemicalsInput > 0 || chemicalsCalc.wasted > 0) {
-                chemicalsResultDiv.innerHTML = formatResults("Chemicals", chemicalsCalc);
+            if (netChemicals > 0 || chemicalsNeeded > 0) {
+                const chemicalsCalc = calculateUnits(netChemicals, unitSizes.chemicals);
+                chemicalsResultDiv.innerHTML = formatResults("Chemicals", chemicalsNeeded, chemicalsHave, netChemicals, chemicalsCalc);
                 chemicalsResultDiv.classList.remove('hidden');
                 hasAnyResults = true;
             }
-            if (specialAlloysInput > 0 || specialAlloysCalc.wasted > 0) {
-                specialAlloysResultDiv.innerHTML = formatResults("Special Alloys", specialAlloysCalc);
+            if (netSpecialAlloys > 0 || specialAlloysNeeded > 0) {
+                const specialAlloysCalc = calculateUnits(netSpecialAlloys, unitSizes.specialAlloys);
+                specialAlloysResultDiv.innerHTML = formatResults("Special Alloys", specialAlloysNeeded, specialAlloysHave, netSpecialAlloys, specialAlloysCalc);
                 specialAlloysResultDiv.classList.remove('hidden');
                 hasAnyResults = true;
             }
-
+            // Chiral Crystals do not have units, so pass null for calcResult
+            if (netChiralCrystals > 0 || chiralCrystalsNeeded > 0) {
+                chiralCrystalsResultDiv.innerHTML = formatResults("Chiral Crystals", chiralCrystalsNeeded, chiralCrystalsHave, netChiralCrystals, null);
+                chiralCrystalsResultDiv.classList.remove('hidden');
+                hasAnyResults = true;
+            }
 
             // Hide placeholder if results are being shown, otherwise show it if no results
             if (hasAnyResults) {
                 document.getElementById('results-placeholder').classList.add('hidden');
             } else {
                 document.getElementById('results-placeholder').classList.remove('hidden');
-                showModalMessage("Please enter an amount for at least one material to calculate units."); // Show message if no results and all inputs are zero
+                // Only show message if ALL needed inputs are zero and no results are shown
+                if (resinsNeeded === 0 && metalsNeeded === 0 && ceramicsNeeded === 0 && chemicalsNeeded === 0 && specialAlloysNeeded === 0 && chiralCrystalsNeeded === 0) {
+                    showModalMessage("Please enter an amount for at least one material to calculate units.");
+                }
             }
 
             // Scroll to the results container after calculation
             document.getElementById('results-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
 
-        // Event listener for the new reset button
+        // Event listener for the reset button
         document.getElementById('resetBtn').addEventListener('click', resetCalculator);
 
         // Initially show the placeholder on page load
         document.addEventListener('DOMContentLoaded', () => {
+            loadInventory(); // Load inventory when the page loads
             document.getElementById('results-placeholder').classList.remove('hidden');
         });
     </script>
