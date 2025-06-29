@@ -105,7 +105,7 @@
             };
         }
 
-        // Define unit sizes for each material type
+        // Define unit sizes for each material type (already sorted descending)
         const unitSizes = {
             resins: [320, 160, 80, 40],
             metals: [400, 200, 100, 50],
@@ -114,22 +114,39 @@
             specialAlloys: [480, 240, 120, 60]
         };
 
-        // Function to calculate units for a given material
+        // Function to calculate units for a given material, ensuring total is met or exceeded
         function calculateUnits(totalAmount, sizes) {
-            let remaining = totalAmount;
-            const unitsBreakdown = {}; // Object to store the count for each unit size
+            let currentTotalProvided = 0;
+            const unitsBreakdown = {};
+            let wasted = 0;
 
-            // Iterate through sizes from largest to smallest (assuming sizes are sorted descending)
+            // Iterate through sizes from largest to smallest to fulfill the totalAmount
             for (const size of sizes) {
-                if (remaining >= size) {
-                    const count = Math.floor(remaining / size); // Number of units of this size
-                    unitsBreakdown[size] = count; // Store the count
-                    remaining -= count * size; // Subtract the amount covered by these units
-                } else {
-                    unitsBreakdown[size] = 0; // If current size is too large, 0 units of this size
+                if (size > 0 && currentTotalProvided < totalAmount) {
+                    const count = Math.floor((totalAmount - currentTotalProvided) / size);
+                    if (count > 0) {
+                        unitsBreakdown[size] = (unitsBreakdown[size] || 0) + count;
+                        currentTotalProvided += count * size;
+                    }
                 }
             }
-            return { units: unitsBreakdown, remaining: remaining };
+
+            // If we still haven't met the totalAmount, add one unit of the smallest size
+            if (currentTotalProvided < totalAmount) {
+                const smallestSize = sizes[sizes.length - 1]; // Smallest unit is the last one in the pre-sorted array
+                if (smallestSize > 0) {
+                    unitsBreakdown[smallestSize] = (unitsBreakdown[smallestSize] || 0) + 1;
+                    currentTotalProvided += smallestSize;
+                }
+            }
+
+            // Calculate the wasted amount (if any)
+            wasted = currentTotalProvided - totalAmount;
+            if (wasted < 0) { // Should not ideally happen with the current logic
+                wasted = 0;
+            }
+
+            return { units: unitsBreakdown, wasted: wasted };
         }
 
         // Function to format the results for display
@@ -162,12 +179,14 @@
                 }
             }
 
-            if (!hasUnits) {
+            // If no units were calculated and there's no wasted amount (meaning input was 0 or invalid)
+            if (!hasUnits && result.wasted === 0) {
                 output += `<p class="text-gray-700 ml-4">No units needed (or total is 0).</p>`;
             }
 
-            if (result.remaining > 0) {
-                output += `<p class="text-red-600 ml-4 font-semibold">Remaining: ${result.remaining} units (cannot be perfectly fit by available unit sizes).</p>`;
+            // Display wasted amount if greater than zero
+            if (result.wasted > 0) {
+                output += `<p class="text-red-600 ml-4 font-semibold">Wasted: ${result.wasted} units (total provided exceeds required amount).</p>`;
             }
             return output;
         }
@@ -220,24 +239,25 @@
             const chemicalsCalc = calculateUnits(chemicalsInput, unitSizes.chemicals);
             const specialAlloysCalc = calculateUnits(specialAlloysInput, unitSizes.specialAlloys);
 
-            // Display results for each material if input > 0 or if there's a remaining amount
-            if (resinsInput > 0 || resinsCalc.remaining > 0) {
+            // Display results for each material if input > 0 or if there's a wasted amount
+            // The condition now checks if there was any input or if any waste occurred, implying a calculation was made.
+            if (resinsInput > 0 || resinsCalc.wasted > 0) {
                 resinsResultDiv.innerHTML = formatResults("Resins", resinsCalc);
                 resinsResultDiv.classList.remove('hidden');
             }
-            if (metalsInput > 0 || metalsCalc.remaining > 0) {
+            if (metalsInput > 0 || metalsCalc.wasted > 0) {
                 metalsResultDiv.innerHTML = formatResults("Metals", metalsCalc);
                 metalsResultDiv.classList.remove('hidden');
             }
-            if (ceramicsInput > 0 || ceramicsCalc.remaining > 0) {
+            if (ceramicsInput > 0 || ceramicsCalc.wasted > 0) {
                 ceramicsResultDiv.innerHTML = formatResults("Ceramics", ceramicsCalc);
                 ceramicsResultDiv.classList.remove('hidden');
             }
-            if (chemicalsInput > 0 || chemicalsCalc.remaining > 0) {
+            if (chemicalsInput > 0 || chemicalsCalc.wasted > 0) {
                 chemicalsResultDiv.innerHTML = formatResults("Chemicals", chemicalsCalc);
                 chemicalsResultDiv.classList.remove('hidden');
             }
-            if (specialAlloysInput > 0 || specialAlloysCalc.remaining > 0) {
+            if (specialAlloysInput > 0 || specialAlloysCalc.wasted > 0) {
                 specialAlloysResultDiv.innerHTML = formatResults("Special Alloys", specialAlloysCalc);
                 specialAlloysResultDiv.classList.remove('hidden');
             }
