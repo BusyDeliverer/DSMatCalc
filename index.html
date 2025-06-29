@@ -110,6 +110,12 @@
             color: #fee2e2; /* red-100 */
             background-color: #dc2626; /* red-600 */
         }
+        .cargo-input {
+            width: 60px;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.375rem;
+            border: 1px solid #d1d5db;
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -373,61 +379,59 @@
             specialAlloys: [480, 240, 120, 60]
         };
 
-        function calculateUnits(totalAmount, sizes) {
+        function calculateUnits(totalAmount, sizes, cargoUnits) {
+            let remainingAmount = totalAmount;
+
+            // Subtract units already in cargo
+            for (const size of Object.keys(cargoUnits)) {
+                remainingAmount -= size * (cargoUnits[size] || 0);
+            }
+            remainingAmount = Math.max(0, remainingAmount);
+
             let currentTotalProvided = 0;
             const unitsBreakdown = {};
             let wasted = 0;
             for (const size of sizes) {
-                if (size > 0 && currentTotalProvided < totalAmount) {
-                    const count = Math.floor((totalAmount - currentTotalProvided) / size);
+                if (size > 0 && currentTotalProvided < remainingAmount) {
+                    const count = Math.floor((remainingAmount - currentTotalProvided) / size);
                     if (count > 0) {
                         unitsBreakdown[size] = (unitsBreakdown[size] || 0) + count;
                         currentTotalProvided += count * size;
                     }
                 }
             }
-            if (currentTotalProvided < totalAmount) {
+            if (currentTotalProvided < remainingAmount) {
                 const smallestSize = sizes[sizes.length - 1];
                 if (smallestSize > 0) {
                     unitsBreakdown[smallestSize] = (unitsBreakdown[smallestSize] || 0) + 1;
                     currentTotalProvided += smallestSize;
                 }
             }
-            wasted = currentTotalProvided - totalAmount;
+            wasted = currentTotalProvided - remainingAmount;
             return { units: unitsBreakdown, wasted: Math.max(0, wasted), totalProvided: currentTotalProvided };
         }
 
-        function formatResults(materialDisplayName, totalNeeded, totalHave, netRequired, calcResult) {
+        function formatResults(materialDisplayName) {
             const keyMap = { "Resins": "resins", "Metals": "metals", "Ceramics": "ceramics", "Chemicals": "chemicals", "Special Alloys": "specialAlloys" };
             const materialKey = keyMap[materialDisplayName];
             let output = `<h3 class="text-lg font-semibold text-gray-800 mb-2">${materialDisplayName}</h3>`;
-            output += `<p class="text-sm text-gray-600">Total Needed: ${totalNeeded}</p>`;
-            output += `<p class="text-sm text-gray-600">You Have: ${totalHave}</p>`;
-            output += `<p class="text-sm font-medium text-blue-700 mb-2">Net Required: ${netRequired}</p>`;
+            output += `<p class="text-sm text-gray-600">Total Needed: <span id="${materialKey}-total-needed"></span></p>`;
+            output += `<p class="text-sm text-gray-600">You Have: <span id="${materialKey}-total-have"></span></p>`;
+            output += `<p class="text-sm font-medium text-blue-700 mb-2">Net Required: <span id="${materialKey}-net-required"></span></p>`;
 
             if (materialDisplayName !== "Chiral Crystals") {
-                let hasUnits = false;
-                if (!materialKey || !unitSizes[materialKey]) {
-                    output += `<p class="text-red-600">Error: Could not retrieve unit sizes.</p>`;
-                } else {
-                    output += `<p class="text-sm font-semibold text-gray-700 mt-2">Unit Breakdown:</p>`;
-                    const sizesForMaterial = unitSizes[materialKey];
-                    for (const size of sizesForMaterial) {
-                        const count = calcResult.units[size] || 0;
-                        if (count > 0) {
-                            output += `<p class="text-sm text-gray-700 ml-4">${count} x ${size} units</p>`;
-                            hasUnits = true;
-                        }
-                    }
-                    if (!hasUnits && netRequired > 0) {
-                        output += `<p class="text-sm text-gray-500 ml-4">No standard units needed.</p>`;
-                    } else if (netRequired <= 0) {
-                        output += `<p class="text-sm text-gray-500 ml-4">Requirements met.</p>`;
-                    }
+                output += `<p class="text-sm font-semibold text-gray-700 mt-2">Unit Breakdown:</p>`;
+                const sizesForMaterial = unitSizes[materialKey];
+                for (const size of sizesForMaterial) {
+                    output += `<div class="flex justify-between items-center ml-4 mb-1">`;
+                    output += `<span class="text-sm text-gray-700"><span id="${materialKey}-${size}-count">0</span> x ${size} units</span>`;
+                    output += `<div class="flex items-center gap-2">`;
+                    output += `<label for="${materialKey}-${size}-cargo" class="text-xs text-gray-500">In Cargo:</label>`;
+                    output += `<input type="number" id="${materialKey}-${size}-cargo" class="cargo-input" min="0" value="0" data-material-key="${materialKey}">`;
+                    output += `<input type="checkbox" id="${materialKey}-${size}-checkbox" class="cargo-checkbox h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" data-material-key="${materialKey}" data-size="${size}">`;
+                    output += `</div></div>`;
                 }
-                if (calcResult && calcResult.wasted > 0) {
-                    output += `<p class="text-sm font-medium text-red-600 mt-1">Wasted: ${calcResult.wasted}</p>`;
-                }
+                output += `<p id="${materialKey}-wasted-container" class="text-sm font-medium text-red-600 mt-1 ml-4 hidden">Wasted: <span id="${materialKey}-wasted">0</span></p>`;
             }
             return output;
         }
@@ -605,201 +609,325 @@
             clearResults();
             saveAppState();
         }
-
-        // Modal Handlers
-        const addProjectModal = document.getElementById('addProjectModal');
-        const projectNameInput = document.getElementById('projectNameInput');
-        const confirmAddProjectBtn = document.getElementById('confirmAddProjectBtn');
-        const cancelAddProjectBtn = document.getElementById('cancelAddProjectBtn');
-
-        const renameProjectModal = document.getElementById('renameProjectModal');
-        const renameProjectInput = document.getElementById('renameProjectInput');
-        const confirmRenameProjectBtn = document.getElementById('confirmRenameProjectBtn');
-        const cancelRenameProjectBtn = document.getElementById('cancelRenameProjectBtn');
-
-        const deleteProjectModal = document.getElementById('deleteProjectModal');
-        const deleteProjectMessage = document.getElementById('deleteProjectMessage');
-        const confirmDeleteProjectBtn = document.getElementById('confirmDeleteProjectBtn');
-        const cancelDeleteProjectBtn = document.getElementById('cancelDeleteProjectBtn');
         
-        const clearAllModal = document.getElementById('clearAllModal');
-        const confirmClearAllBtn = document.getElementById('confirmClearAllBtn');
-        const cancelClearAllBtn = document.getElementById('cancelClearAllBtn');
+        function updateUnitBreakdown(materialKey) {
+            const needed = parseInt(document.getElementById(`${materialKey}Needed`).value) || 0;
+            const have = parseInt(document.getElementById(`${materialKey}Have`).value) || 0;
+            const netRequired = Math.max(0, needed - have);
 
-        const confirmFinishedModal = document.getElementById('confirmFinishedModal');
-        const deleteAfterFinishCheckbox = document.getElementById('deleteAfterFinishCheckbox');
-        const confirmFinishedYesBtn = document.getElementById('confirmFinishedYesBtn');
-        const confirmFinishedNoBtn = document.getElementById('confirmFinishedNoBtn');
+            document.getElementById(`${materialKey}-total-needed`).textContent = needed;
+            document.getElementById(`${materialKey}-total-have`).textContent = have;
+            document.getElementById(`${materialKey}-net-required`).textContent = netRequired;
 
-        function openAddProjectModal() {
-            projectNameInput.value = `Project ${appState.projects.length + 1}`;
-            addProjectModal.classList.remove('hidden');
-            projectNameInput.focus();
-            projectNameInput.select();
-        }
-        function closeAddProjectModal() { addProjectModal.classList.add('hidden'); }
-
-        function openRenameProjectModal(index) {
-            appState.projectToRenameIndex = index;
-            renameProjectInput.value = appState.projects[index].name;
-            renameProjectModal.classList.remove('hidden');
-            renameProjectInput.focus();
-            renameProjectInput.select();
-        }
-        function closeRenameProjectModal() {
-            renameProjectModal.classList.add('hidden');
-            appState.projectToRenameIndex = null;
-        }
-
-        function openDeleteProjectModal(index) {
-            appState.projectToDeleteIndex = index;
-            const projectName = appState.projects[index].name;
-            deleteProjectMessage.textContent = `Are you sure you want to delete "${projectName}"? This action cannot be undone.`;
-            deleteProjectModal.classList.remove('hidden');
-        }
-        function closeDeleteProjectModal() {
-            deleteProjectModal.classList.add('hidden');
-            appState.projectToDeleteIndex = null;
-        }
-        
-        function openFinishProjectModal() {
-            deleteAfterFinishCheckbox.checked = false;
-            confirmFinishedModal.classList.remove('hidden');
-        }
-        function closeFinishProjectModal() { confirmFinishedModal.classList.add('hidden'); }
-        
-        function openClearAllModal() {
-            clearAllModal.classList.remove('hidden');
-        }
-        function closeClearAllModal() {
-            clearAllModal.classList.add('hidden');
-        }
-
-
-        confirmAddProjectBtn.addEventListener('click', () => {
-            const newProjectName = projectNameInput.value.trim();
-            if (newProjectName) {
-                appState.projects.push({ name: newProjectName, materials: { resinsNeeded: 0, metalsNeeded: 0, ceramicsNeeded: 0, chemicalsNeeded: 0, specialAlloysNeeded: 0, chiralCrystalsNeeded: 0 }});
-                closeAddProjectModal();
-                switchProject(appState.projects.length - 1);
-            } else { showModalMessage("Project name cannot be empty."); }
-        });
-
-        confirmRenameProjectBtn.addEventListener('click', () => {
-            const newName = renameProjectInput.value.trim();
-            if (newName && appState.projectToRenameIndex !== null) {
-                appState.projects[appState.projectToRenameIndex].name = newName;
-                saveAppState();
-                renderTabs();
-                loadProjectData(appState.activeProjectIndex); // update header if active project is renamed
-                closeRenameProjectModal();
-            } else { showModalMessage("Project name cannot be empty."); }
-        });
-
-        confirmDeleteProjectBtn.addEventListener('click', () => {
-            const indexToDelete = appState.projectToDeleteIndex;
-            if (indexToDelete === null) return;
-            
-            appState.projects.splice(indexToDelete, 1);
-            if (appState.activeProjectIndex >= indexToDelete && appState.activeProjectIndex > 0) {
-                appState.activeProjectIndex = appState.activeProjectIndex - 1;
-            } else if (appState.projects.length === 0) {
-                appState.activeProjectIndex = -1;
-            }
-            
-            closeDeleteProjectModal();
-            saveAppState();
-            switchProject(appState.activeProjectIndex);
-        });
-
-        confirmFinishedYesBtn.addEventListener('click', () => {
-            const shouldDelete = deleteAfterFinishCheckbox.checked;
-            const projectIndexToFinish = appState.activeProjectIndex;
-            const project = appState.projects[projectIndexToFinish];
-
-            if(!project) return;
-            
-            Object.keys(project.materials).forEach(neededKey => {
-                const haveKey = neededKey.replace('Needed', 'Have');
-                const needed = project.materials[neededKey] || 0;
-                appState.inventory[haveKey] = Math.max(0, (appState.inventory[haveKey] || 0) - needed);
+            const cargoUnits = {};
+            const sizes = unitSizes[materialKey];
+            sizes.forEach(size => {
+                const cargoInput = document.getElementById(`${materialKey}-${size}-cargo`);
+                if (cargoInput) {
+                    cargoUnits[size] = parseInt(cargoInput.value) || 0;
+                }
             });
 
-            if (shouldDelete) {
-                 appState.projects.splice(projectIndexToFinish, 1);
-                 if (appState.activeProjectIndex >= projectIndexToFinish && appState.activeProjectIndex > 0) {
-                     appState.activeProjectIndex = appState.activeProjectIndex - 1;
-                 } else if (appState.projects.length === 0) {
-                    appState.activeProjectIndex = -1;
-                 }
-            } else {
-                 Object.keys(project.materials).forEach(key => project.materials[key] = 0);
+            const calcResult = calculateUnits(netRequired, sizes, cargoUnits);
+            
+            sizes.forEach(size => {
+                const count = calcResult.units[size] || 0;
+                const countSpan = document.getElementById(`${materialKey}-${size}-count`);
+                if (countSpan) {
+                    countSpan.textContent = count;
+                }
+            });
+
+            const wastedContainer = document.getElementById(`${materialKey}-wasted-container`);
+            const wastedSpan = document.getElementById(`${materialKey}-wasted`);
+            if (wastedContainer && wastedSpan) {
+                if (calcResult.wasted > 0) {
+                    wastedSpan.textContent = calcResult.wasted;
+                    wastedContainer.classList.remove('hidden');
+                } else {
+                    wastedContainer.classList.add('hidden');
+                }
             }
-
-            closeFinishProjectModal();
-            saveAppState();
-            switchProject(appState.activeProjectIndex);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        cancelAddProjectBtn.addEventListener('click', closeAddProjectModal);
-        cancelRenameProjectBtn.addEventListener('click', closeRenameProjectModal);
-        cancelDeleteProjectBtn.addEventListener('click', closeDeleteProjectModal);
-        confirmFinishedNoBtn.addEventListener('click', closeFinishProjectModal);
-        
-        confirmClearAllBtn.addEventListener('click', () => {
-            appState.projects = [];
-            appState.activeProjectIndex = -1;
-            saveAppState();
-            switchProject(appState.activeProjectIndex);
-            closeClearAllModal();
-        });
-        cancelClearAllBtn.addEventListener('click', closeClearAllModal);
-
-        addProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmAddProjectBtn.click(); if (e.key === 'Escape') cancelAddProjectBtn.click(); });
-        renameProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmRenameProjectBtn.click(); if (e.key === 'Escape') cancelRenameProjectBtn.click(); });
-
-        const addAmountModal = document.getElementById('addAmountModal');
-        const amountToAddInput = document.getElementById('amountToAddInput');
-        const confirmAddAmountBtn = document.getElementById('confirmAddAmountBtn');
-        const cancelAddAmountBtn = document.getElementById('cancelAddAmountBtn');
-        let currentTargetInputId = null;
-
-        function openAddAmountModal(targetId) {
-            currentTargetInputId = targetId;
-            amountToAddInput.value = '';
-            addAmountModal.classList.remove('hidden');
-            amountToAddInput.focus();
         }
-        function closeAddAmountModal() { addAmountModal.classList.add('hidden'); }
 
-        confirmAddAmountBtn.addEventListener('click', () => {
-            const targetInput = document.getElementById(currentTargetInputId);
-            if (targetInput) {
-                const amount = parseInt(amountToAddInput.value) || 0;
-                targetInput.value = (parseInt(targetInput.value) || 0) + amount;
-                targetInput.dispatchEvent(new Event('input'));
+        function runCalculation(isScroll) {
+            const materials = getMaterialInputs();
+            const values = {};
+            materials.forEach(m => {
+                values[m.needed.id] = parseInt(m.needed.value) || 0;
+                values[m.have.id] = parseInt(m.have.value) || 0;
+            });
+
+            const resultsContainer = document.getElementById('results-container');
+            const placeholder = document.getElementById('results-placeholder');
+            let hasAnyResults = false;
+            
+            const processMaterial = (name, neededId, haveId) => {
+                const totalNeeded = values[neededId];
+                const camelCaseName = nameToCamelCase(name);
+                const resultDivId = `${camelCaseName}Result`;
+                const resultDiv = document.getElementById(resultDivId);
+                
+                if (!resultDiv) { return; }
+
+                if (totalNeeded > 0) {
+                    hasAnyResults = true;
+                    
+                    resultDiv.innerHTML = formatResults(name);
+                    updateUnitBreakdown(camelCaseName);
+                    
+                    resultDiv.classList.remove('hidden');
+                     if (name !== "Chiral Crystals") {
+                         resultDiv.querySelectorAll('.cargo-input').forEach(input => {
+                             input.addEventListener('input', () => updateUnitBreakdown(input.dataset.materialKey));
+                         });
+                         resultDiv.querySelectorAll('.cargo-checkbox').forEach(checkbox => {
+                            checkbox.addEventListener('change', (event) => {
+                                const materialKey = event.target.dataset.materialKey;
+                                const size = event.target.dataset.size;
+                                const cargoInput = document.getElementById(`${materialKey}-${size}-cargo`);
+                                const countSpan = document.getElementById(`${materialKey}-${size}-count`);
+                                
+                                if (event.target.checked) {
+                                    const neededForThisRow = parseInt(countSpan.textContent) || 0;
+                                    const alreadyInCargo = parseInt(cargoInput.value) || 0;
+                                    cargoInput.value = neededForThisRow + alreadyInCargo;
+                                    cargoInput.disabled = true;
+                                } else {
+                                    cargoInput.value = 0;
+                                    cargoInput.disabled = false;
+                                }
+                                updateUnitBreakdown(materialKey);
+                            });
+                         });
+                     }
+                } else {
+                    resultDiv.classList.add('hidden');
+                }
+            };
+            
+            processMaterial("Resins", "resinsNeeded", "resinsHave");
+            processMaterial("Metals", "metalsNeeded", "metalsHave");
+            processMaterial("Ceramics", "ceramicsNeeded", "ceramicsHave");
+            processMaterial("Chemicals", "chemicalsNeeded", "chemicalsHave");
+            processMaterial("Special Alloys", "specialAlloysNeeded", "specialAlloysHave");
+            processMaterial("Chiral Crystals", "chiralCrystalsNeeded", "chiralCrystalsHave");
+
+            if (hasAnyResults) {
+                placeholder.classList.add('hidden');
+                resultsContainer.classList.remove('hidden');
+                if (isScroll) {
+                    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            } else {
+                placeholder.classList.remove('hidden');
+                resultsContainer.classList.add('hidden');
+                if (Object.values(values).every(v => v === 0)) {
+                    showModalMessage("Please enter an amount for at least one material.");
+                }
             }
-            closeAddAmountModal();
-        });
-
-        cancelAddAmountBtn.addEventListener('click', closeAddAmountModal);
-
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-        const openSidebar = () => {
-            sidebar.classList.remove('-translate-x-full');
-            sidebarOverlay.classList.remove('hidden');
-        };
-        const closeSidebar = () => {
-            sidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('hidden');
-        };
+        }
 
         // Event Listeners Setup
         document.addEventListener('DOMContentLoaded', () => {
+             // Modal Elements
+            const addProjectModal = document.getElementById('addProjectModal');
+            const projectNameInput = document.getElementById('projectNameInput');
+            const confirmAddProjectBtn = document.getElementById('confirmAddProjectBtn');
+            const cancelAddProjectBtn = document.getElementById('cancelAddProjectBtn');
+
+            const renameProjectModal = document.getElementById('renameProjectModal');
+            const renameProjectInput = document.getElementById('renameProjectInput');
+            const confirmRenameProjectBtn = document.getElementById('confirmRenameProjectBtn');
+            const cancelRenameProjectBtn = document.getElementById('cancelRenameProjectBtn');
+
+            const deleteProjectModal = document.getElementById('deleteProjectModal');
+            const deleteProjectMessage = document.getElementById('deleteProjectMessage');
+            const confirmDeleteProjectBtn = document.getElementById('confirmDeleteProjectBtn');
+            const cancelDeleteProjectBtn = document.getElementById('cancelDeleteProjectBtn');
+            
+            const clearAllModal = document.getElementById('clearAllModal');
+            const confirmClearAllBtn = document.getElementById('confirmClearAllBtn');
+            const cancelClearAllBtn = document.getElementById('cancelClearAllBtn');
+
+            const confirmFinishedModal = document.getElementById('confirmFinishedModal');
+            const deleteAfterFinishCheckbox = document.getElementById('deleteAfterFinishCheckbox');
+            const confirmFinishedYesBtn = document.getElementById('confirmFinishedYesBtn');
+            const confirmFinishedNoBtn = document.getElementById('confirmFinishedNoBtn');
+            
+            const addAmountModal = document.getElementById('addAmountModal');
+            const amountToAddInput = document.getElementById('amountToAddInput');
+            const confirmAddAmountBtn = document.getElementById('confirmAddAmountBtn');
+            const cancelAddAmountBtn = document.getElementById('cancelAddAmountBtn');
+            let currentTargetInputId = null;
+
+            // Modal Functions
+            function openAddProjectModal() {
+                projectNameInput.value = `Project ${appState.projects.length + 1}`;
+                addProjectModal.classList.remove('hidden');
+                projectNameInput.focus();
+                projectNameInput.select();
+            }
+            function closeAddProjectModal() { addProjectModal.classList.add('hidden'); }
+
+            function openRenameProjectModal(index) {
+                appState.projectToRenameIndex = index;
+                renameProjectInput.value = appState.projects[index].name;
+                renameProjectModal.classList.remove('hidden');
+                renameProjectInput.focus();
+                renameProjectInput.select();
+            }
+            function closeRenameProjectModal() {
+                renameProjectModal.classList.add('hidden');
+                appState.projectToRenameIndex = null;
+            }
+
+            function openDeleteProjectModal(index) {
+                appState.projectToDeleteIndex = index;
+                const projectName = appState.projects[index].name;
+                deleteProjectMessage.textContent = `Are you sure you want to delete "${projectName}"? This action cannot be undone.`;
+                deleteProjectModal.classList.remove('hidden');
+            }
+            function closeDeleteProjectModal() {
+                deleteProjectModal.classList.add('hidden');
+                appState.projectToDeleteIndex = null;
+            }
+            
+            function openFinishProjectModal() {
+                deleteAfterFinishCheckbox.checked = false;
+                confirmFinishedModal.classList.remove('hidden');
+            }
+            function closeFinishProjectModal() { confirmFinishedModal.classList.add('hidden'); }
+            
+            function openClearAllModal() {
+                clearAllModal.classList.remove('hidden');
+            }
+            function closeClearAllModal() {
+                clearAllModal.classList.add('hidden');
+            }
+            
+            function openAddAmountModal(targetId) {
+                currentTargetInputId = targetId;
+                amountToAddInput.value = '';
+                addAmountModal.classList.remove('hidden');
+                amountToAddInput.focus();
+            }
+            function closeAddAmountModal() { addAmountModal.classList.add('hidden'); }
+
+
+            // Modal Event Listeners
+            confirmAddProjectBtn.addEventListener('click', () => {
+                const newProjectName = projectNameInput.value.trim();
+                if (newProjectName) {
+                    appState.projects.push({ name: newProjectName, materials: { resinsNeeded: 0, metalsNeeded: 0, ceramicsNeeded: 0, chemicalsNeeded: 0, specialAlloysNeeded: 0, chiralCrystalsNeeded: 0 }});
+                    closeAddProjectModal();
+                    switchProject(appState.projects.length - 1);
+                } else { showModalMessage("Project name cannot be empty."); }
+            });
+
+            confirmRenameProjectBtn.addEventListener('click', () => {
+                const newName = renameProjectInput.value.trim();
+                if (newName && appState.projectToRenameIndex !== null) {
+                    appState.projects[appState.projectToRenameIndex].name = newName;
+                    saveAppState();
+                    renderTabs();
+                    loadProjectData(appState.activeProjectIndex); // update header if active project is renamed
+                    closeRenameProjectModal();
+                } else { showModalMessage("Project name cannot be empty."); }
+            });
+
+            confirmDeleteProjectBtn.addEventListener('click', () => {
+                const indexToDelete = appState.projectToDeleteIndex;
+                if (indexToDelete === null) return;
+                
+                appState.projects.splice(indexToDelete, 1);
+                if (appState.activeProjectIndex >= indexToDelete && appState.activeProjectIndex > 0) {
+                    appState.activeProjectIndex = appState.activeProjectIndex - 1;
+                } else if (appState.projects.length === 0) {
+                    appState.activeProjectIndex = -1;
+                }
+                
+                closeDeleteProjectModal();
+                saveAppState();
+                switchProject(appState.activeProjectIndex);
+            });
+
+            confirmFinishedYesBtn.addEventListener('click', () => {
+                const shouldDelete = deleteAfterFinishCheckbox.checked;
+                const projectIndexToFinish = appState.activeProjectIndex;
+                const project = appState.projects[projectIndexToFinish];
+
+                if(!project) return;
+                
+                Object.keys(project.materials).forEach(neededKey => {
+                    const haveKey = neededKey.replace('Needed', 'Have');
+                    const needed = project.materials[neededKey] || 0;
+                    appState.inventory[haveKey] = Math.max(0, (appState.inventory[haveKey] || 0) - needed);
+                });
+
+                if (shouldDelete) {
+                    appState.projects.splice(projectIndexToFinish, 1);
+                    if (appState.activeProjectIndex >= projectIndexToFinish && appState.activeProjectIndex > 0) {
+                        appState.activeProjectIndex = appState.activeProjectIndex - 1;
+                    } else if (appState.projects.length === 0) {
+                        appState.activeProjectIndex = -1;
+                    }
+                } else {
+                    Object.keys(project.materials).forEach(key => project.materials[key] = 0);
+                }
+
+                closeFinishProjectModal();
+                saveAppState();
+                switchProject(appState.activeProjectIndex);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            confirmAddAmountBtn.addEventListener('click', () => {
+                const targetInput = document.getElementById(currentTargetInputId);
+                if (targetInput) {
+                    const amount = parseInt(amountToAddInput.value) || 0;
+                    targetInput.value = (parseInt(targetInput.value) || 0) + amount;
+                    targetInput.dispatchEvent(new Event('input'));
+                }
+                closeAddAmountModal();
+            });
+
+            cancelAddProjectBtn.addEventListener('click', closeAddProjectModal);
+            cancelRenameProjectBtn.addEventListener('click', closeRenameProjectModal);
+            cancelDeleteProjectBtn.addEventListener('click', closeDeleteProjectModal);
+            confirmFinishedNoBtn.addEventListener('click', closeFinishProjectModal);
+            cancelAddAmountBtn.addEventListener('click', closeAddAmountModal);
+            
+            confirmClearAllBtn.addEventListener('click', () => {
+                appState.projects = [];
+                appState.activeProjectIndex = -1;
+                saveAppState();
+                switchProject(appState.activeProjectIndex);
+                closeClearAllModal();
+            });
+            cancelClearAllBtn.addEventListener('click', closeClearAllModal);
+
+            addProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmAddProjectBtn.click(); if (e.key === 'Escape') cancelAddProjectBtn.click(); });
+            renameProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmRenameProjectBtn.click(); if (e.key === 'Escape') cancelRenameProjectBtn.click(); });
+            deleteProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmDeleteProjectBtn.click(); if (e.key === 'Escape') cancelDeleteProjectBtn.click(); });
+            clearAllModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmClearAllBtn.click(); if (e.key === 'Escape') cancelClearAllBtn.click(); });
+            addAmountModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmAddAmountBtn.click(); if (e.key === 'Escape') cancelAddAmountBtn.click(); });
+            confirmFinishedModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmFinishedYesBtn.click(); if (e.key === 'Escape') confirmFinishedNoBtn.click(); });
+
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const openSidebar = () => {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+            };
+            const closeSidebar = () => {
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+            };
+
+            // Global Event Listeners
             loadAppState();
-            switchProject(appState.activeProjectIndex); // Initial load
+            switchProject(appState.activeProjectIndex);
             
             document.getElementById('menu-toggle').addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -809,70 +937,10 @@
             
             document.getElementById('emptyStateAddBtn').addEventListener('click', openAddProjectModal);
             sidebarOverlay.addEventListener('click', closeSidebar);
-
             document.getElementById('addProjectBtn').addEventListener('click', openAddProjectModal);
             document.getElementById('clearAllBtn').addEventListener('click', openClearAllModal);
             document.getElementById('finishedBtn').addEventListener('click', openFinishProjectModal);
-            document.getElementById('calculateBtn').addEventListener('click', () => {
-                const materials = getMaterialInputs();
-                const values = {};
-                materials.forEach(m => {
-                    values[m.needed.id] = parseInt(m.needed.value) || 0;
-                    values[m.have.id] = parseInt(m.have.value) || 0;
-                });
-
-                const resultsContainer = document.getElementById('results-container');
-                const placeholder = document.getElementById('results-placeholder');
-                let hasAnyResults = false;
-                
-                resultsContainer.querySelectorAll('div[id$="Result"]').forEach(div => {
-                    div.innerHTML = '';
-                    div.classList.add('hidden');
-                });
-
-                const processMaterial = (name, neededId, haveId) => {
-                    const totalNeeded = values[neededId];
-                    const camelCaseName = nameToCamelCase(name);
-                    const resultDivId = `${camelCaseName}Result`;
-                    const resultDiv = document.getElementById(resultDivId);
-
-                    if (!resultDiv) {
-                        console.error(`Could not find result div with ID: ${resultDivId}`);
-                        return;
-                    }
-
-                    if (totalNeeded > 0) {
-                        hasAnyResults = true;
-                        const totalHave = values[haveId];
-                        const netRequired = Math.max(0, totalNeeded - totalHave);
-                        const calcResult = name !== "Chiral Crystals" ? calculateUnits(netRequired, unitSizes[camelCaseName]) : null;
-                        resultDiv.innerHTML = formatResults(name, totalNeeded, totalHave, netRequired, calcResult);
-                        resultDiv.classList.remove('hidden');
-                    } else {
-                        resultDiv.classList.add('hidden');
-                    }
-                };
-                
-                processMaterial("Resins", "resinsNeeded", "resinsHave");
-                processMaterial("Metals", "metalsNeeded", "metalsHave");
-                processMaterial("Ceramics", "ceramicsNeeded", "ceramicsHave");
-                processMaterial("Chemicals", "chemicalsNeeded", "chemicalsHave");
-                processMaterial("Special Alloys", "specialAlloysNeeded", "specialAlloysHave");
-                processMaterial("Chiral Crystals", "chiralCrystalsNeeded", "chiralCrystalsHave");
-
-                if (hasAnyResults) {
-                    placeholder.classList.add('hidden');
-                    resultsContainer.classList.remove('hidden');
-                    resultsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                } else {
-                    placeholder.classList.remove('hidden');
-                    resultsContainer.classList.add('hidden');
-                    if (Object.values(values).every(v => v === 0)) {
-                        showModalMessage("Please enter an amount for at least one material.");
-                    }
-                }
-            });
-
+            document.getElementById('calculateBtn').addEventListener('click', () => runCalculation(true));
             document.getElementById('resetBtn').addEventListener('click', resetCalculator);
 
             document.querySelectorAll('.plus-btn').forEach(btn => {
