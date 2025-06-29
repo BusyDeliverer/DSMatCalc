@@ -1,5 +1,3 @@
-Here's the updated `README.md` with that clarification:
-
 # Death Stranding Material Unit Calculator
 
 > A simple and intuitive web-based tool designed to help Porters in Death Stranding calculate and manage the required units of various materials, complete with features for easy input management, inventory tracking, and project completion.
