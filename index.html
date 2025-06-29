@@ -78,7 +78,7 @@
             color: white;
             font-weight: 600;
         }
-        .rename-btn {
+        .icon-btn {
             background: transparent;
             border: none;
             cursor: pointer;
@@ -86,18 +86,25 @@
             border-radius: 0.25rem;
             color: #9ca3af; /* gray-400 */
             flex-shrink: 0;
-            margin-left: 0.5rem;
+            margin-left: 0.25rem;
         }
-        .rename-btn:hover {
+        .icon-btn:hover {
             background-color: #d1d5db; /* gray-300 */
             color: #1f2937; /* gray-800 */
         }
-        .sidebar-button-container.active .rename-btn {
+        .sidebar-button-container.active .icon-btn {
             color: #bfdbfe; /* blue-200 */
         }
-         .sidebar-button-container.active .rename-btn:hover {
+         .sidebar-button-container.active .icon-btn:hover {
             background-color: #60a5fa; /* blue-400 */
             color: white;
+        }
+        .delete-btn:hover {
+            color: #ef4444; /* red-500 */
+        }
+        .sidebar-button-container.active .delete-btn:hover {
+            color: #fee2e2; /* red-100 */
+            background-color: #dc2626; /* red-600 */
         }
     </style>
 </head>
@@ -128,121 +135,129 @@
         </div>
         
         <!-- Main Content Area for the Calculator -->
-        <div class="w-full p-8 overflow-y-auto">
-            <h1 class="text-3xl font-bold text-gray-800 text-center">Material Unit Calculator</h1>
-            <h2 id="currentProjectName" class="text-xl font-semibold text-gray-500 mb-6 text-center"></h2>
+        <div id="main-content" class="w-full p-8 overflow-y-auto">
+            <div id="calculator-view">
+                <h1 class="text-3xl font-bold text-gray-800 text-center">Material Unit Calculator</h1>
+                <h2 id="currentProjectName" class="text-xl font-semibold text-gray-500 mb-6 text-center"></h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <!-- Resins Inputs -->
-                <div class="flex flex-col">
-                    <label for="resinsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Resins Needed:</label>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="number" id="resinsNeeded" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resinsNeeded">+</button>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Resins Inputs -->
+                    <div class="flex flex-col">
+                        <label for="resinsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Resins Needed:</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="number" id="resinsNeeded" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resinsNeeded">+</button>
+                        </div>
+                        <label for="resinsHave" class="text-lg font-medium text-gray-700 mb-2">Resins You Have:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="resinsHave" placeholder="e.g., 50" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resinsHave">+</button>
+                        </div>
                     </div>
-                    <label for="resinsHave" class="text-lg font-medium text-gray-700 mb-2">Resins You Have:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="resinsHave" placeholder="e.g., 50" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="resinsHave">+</button>
+
+                    <!-- Metals Inputs -->
+                    <div class="flex flex-col">
+                        <label for="metalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Metals Needed:</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="number" id="metalsNeeded" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metalsNeeded">+</button>
+                        </div>
+                        <label for="metalsHave" class="text-lg font-medium text-gray-700 mb-2">Metals You Have:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="metalsHave" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metalsHave">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Ceramics Inputs -->
+                    <div class="flex flex-col">
+                        <label for="ceramicsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Ceramics Needed:</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="number" id="ceramicsNeeded" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramicsNeeded">+</button>
+                        </div>
+                        <label for="ceramicsHave" class="text-lg font-medium text-gray-700 mb-2">Ceramics You Have:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="ceramicsHave" placeholder="e.g., 80" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramicsHave">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Chemicals Inputs -->
+                    <div class="flex flex-col">
+                        <label for="chemicalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Chemicals Needed:</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="number" id="chemicalsNeeded" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicalsNeeded">+</button>
+                        </div>
+                        <label for="chemicalsHave" class="text-lg font-medium text-gray-700 mb-2">Chemicals You Have:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="chemicalsHave" placeholder="e.g., 30" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicalsHave">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Special Alloys Inputs -->
+                    <div class="flex flex-col">
+                        <label for="specialAlloysNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="number" id="specialAlloysNeeded" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloysNeeded">+</button>
+                        </div>
+                        <label for="specialAlloysHave" class="text-lg font-medium text-gray-700 mb-2">Special Alloys You Have:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="specialAlloysHave" placeholder="e.g., 120" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloysHave">+</button>
+                        </div>
+                    </div>
+
+                    <!-- Chiral Crystals Inputs -->
+                    <div class="flex flex-col">
+                        <label for="chiralCrystalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Chiral Crystals Needed:</label>
+                        <div class="flex items-center gap-2 mb-2">
+                            <input type="number" id="chiralCrystalsNeeded" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystalsNeeded">+</button>
+                        </div>
+                        <label for="chiralCrystalsHave" class="text-lg font-medium text-gray-700 mb-2">Chiral Crystals You Have:</label>
+                        <div class="flex items-center gap-2">
+                            <input type="number" id="chiralCrystalsHave" placeholder="e.g., 20" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+                            <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystalsHave">+</button>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Metals Inputs -->
-                <div class="flex flex-col">
-                    <label for="metalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Metals Needed:</label>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="number" id="metalsNeeded" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metalsNeeded">+</button>
-                    </div>
-                    <label for="metalsHave" class="text-lg font-medium text-gray-700 mb-2">Metals You Have:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="metalsHave" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="metalsHave">+</button>
-                    </div>
+                <button id="calculateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+                    Calculate Units
+                </button>
+                
+                <button id="resetBtn" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-4 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-75">
+                    Reset needed materials
+                </button>
+                
+                <!-- Results and Placeholder -->
+                <div id="results-placeholder" class="mt-8 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center text-gray-500 italic">
+                    Enter amounts and click "Calculate Units" to see the breakdown.
+                </div>
+                <div id="results-container" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                    <div id="resinsResult" class="bg-blue-50 p-4 rounded-lg border border-blue-200"></div>
+                    <div id="metalsResult" class="bg-green-50 p-4 rounded-lg border border-green-200"></div>
+                    <div id="ceramicsResult" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200"></div>
+                    <div id="chemicalsResult" class="bg-purple-50 p-4 rounded-lg border border-purple-200"></div>
+                    <div id="specialAlloysResult" class="bg-red-50 p-4 rounded-lg border border-red-200"></div>
+                    <div id="chiralCrystalsResult" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
                 </div>
 
-                <!-- Ceramics Inputs -->
-                <div class="flex flex-col">
-                    <label for="ceramicsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Ceramics Needed:</label>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="number" id="ceramicsNeeded" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramicsNeeded">+</button>
-                    </div>
-                    <label for="ceramicsHave" class="text-lg font-medium text-gray-700 mb-2">Ceramics You Have:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="ceramicsHave" placeholder="e.g., 80" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="ceramicsHave">+</button>
-                    </div>
-                </div>
-
-                <!-- Chemicals Inputs -->
-                <div class="flex flex-col">
-                    <label for="chemicalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Chemicals Needed:</label>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="number" id="chemicalsNeeded" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicalsNeeded">+</button>
-                    </div>
-                    <label for="chemicalsHave" class="text-lg font-medium text-gray-700 mb-2">Chemicals You Have:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="chemicalsHave" placeholder="e.g., 30" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chemicalsHave">+</button>
-                    </div>
-                </div>
-
-                <!-- Special Alloys Inputs -->
-                <div class="flex flex-col">
-                    <label for="specialAlloysNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="number" id="specialAlloysNeeded" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloysNeeded">+</button>
-                    </div>
-                    <label for="specialAlloysHave" class="text-lg font-medium text-gray-700 mb-2">Special Alloys You Have:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="specialAlloysHave" placeholder="e.g., 120" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="specialAlloysHave">+</button>
-                    </div>
-                </div>
-
-                <!-- Chiral Crystals Inputs -->
-                <div class="flex flex-col">
-                    <label for="chiralCrystalsNeeded" class="text-lg font-medium text-gray-700 mb-2">Total Chiral Crystals Needed:</label>
-                    <div class="flex items-center gap-2 mb-2">
-                        <input type="number" id="chiralCrystalsNeeded" placeholder="e.g., 100" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystalsNeeded">+</button>
-                    </div>
-                    <label for="chiralCrystalsHave" class="text-lg font-medium text-gray-700 mb-2">Chiral Crystals You Have:</label>
-                    <div class="flex items-center gap-2">
-                        <input type="number" id="chiralCrystalsHave" placeholder="e.g., 20" class="p-3 border border-gray-300 rounded-lg flex-grow focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
-                        <button class="plus-btn bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200" data-target-input="chiralCrystalsHave">+</button>
-                    </div>
-                </div>
+                <button id="finishedBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-8 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
+                    Project Finished
+                </button>
             </div>
-
-            <button id="calculateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                Calculate Units
-            </button>
             
-            <button id="finishedBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-4 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75">
-                Project Finished
-            </button>
-            
-            <button id="resetBtn" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-4 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-75">
-                Reset needed materials
-            </button>
-            
-            <!-- Results and Placeholder -->
-            <div id="results-placeholder" class="mt-8 p-4 bg-gray-100 rounded-lg border border-gray-200 text-center text-gray-500 italic">
-                Enter amounts and click "Calculate Units" to see the breakdown.
+            <div id="empty-state-view" class="hidden flex flex-col items-center justify-center h-full">
+                 <h1 class="text-2xl font-bold text-gray-600 mb-4">No projects yet</h1>
+                 <button id="emptyStateAddBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-200">
+                    + Add New Project
+                </button>
             </div>
-            <div id="results-container" class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
-                <div id="resinsResult" class="bg-blue-50 p-4 rounded-lg border border-blue-200"></div>
-                <div id="metalsResult" class="bg-green-50 p-4 rounded-lg border border-green-200"></div>
-                <div id="ceramicsResult" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200"></div>
-                <div id="chemicalsResult" class="bg-purple-50 p-4 rounded-lg border border-purple-200"></div>
-                <div id="specialAlloysResult" class="bg-red-50 p-4 rounded-lg border border-red-200"></div>
-                <div id="chiralCrystalsResult" class="bg-gray-50 p-4 rounded-lg border border-gray-200"></div>
-            </div>
-
         </div>
     </div>
 
@@ -273,6 +288,15 @@
             </div>
         </div>
     </div>
+    <div id="deleteProjectModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <p id="deleteProjectMessage" class="text-gray-800 text-lg mb-4"></p>
+            <div class="flex justify-center gap-4">
+                <button id="confirmDeleteProjectBtn" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-md">Yes, Delete</button>
+                <button id="cancelDeleteProjectBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md">Cancel</button>
+            </div>
+        </div>
+    </div>
     <div id="addAmountModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
         <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Add Amount</h3>
@@ -284,11 +308,16 @@
         </div>
     </div>
     <div id="confirmFinishedModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
-            <p class="text-gray-800 text-lg mb-4">Are you sure you want to mark this project as finished? This will reset "Total Needed" and adjust "You Have" amounts.</p>
+        <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Finish Project?</h3>
+            <p class="text-gray-800 text-lg mb-4">This will mark the project as complete and update your inventory.</p>
+            <div class="flex items-center justify-center my-4">
+                <input type="checkbox" id="deleteAfterFinishCheckbox" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label for="deleteAfterFinishCheckbox" class="ml-2 block text-sm text-gray-900">Delete project after finishing</label>
+            </div>
             <div class="flex justify-center gap-4">
-                <button id="confirmFinishedYesBtn" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md">Yes, Finished</button>
-                <button id="confirmFinishedNoBtn" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-md">No, Cancel</button>
+                <button id="confirmFinishedYesBtn" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md">Confirm</button>
+                <button id="confirmFinishedNoBtn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-md">Cancel</button>
             </div>
         </div>
     </div>
@@ -302,7 +331,8 @@
                 chemicalsHave: 0, specialAlloysHave: 0, chiralCrystalsHave: 0,
             },
             activeProjectIndex: 0,
-            projectToRenameIndex: null, // To track which project is being renamed
+            projectToRenameIndex: null,
+            projectToDeleteIndex: null,
         };
         
         // Helper function to convert display names to camelCase for use as keys/IDs
@@ -403,18 +433,33 @@
             if (savedState) {
                 appState = JSON.parse(savedState);
                 if (!appState.projects || appState.projects.length === 0) {
-                    appState.projects = [{ name: "Project 1", materials: { resinsNeeded: 0, metalsNeeded: 0, ceramicsNeeded: 0, chemicalsNeeded: 0, specialAlloysNeeded: 0, chiralCrystalsNeeded: 0 }}];
-                    appState.activeProjectIndex = 0;
+                    appState.projects = [];
+                    appState.activeProjectIndex = -1;
                 }
                 if (!appState.inventory) {
                     appState.inventory = { resinsHave: 0, metalsHave: 0, ceramicsHave: 0, chemicalsHave: 0, specialAlloysHave: 0, chiralCrystalsHave: 0 };
                 }
                 if (appState.activeProjectIndex === undefined || appState.activeProjectIndex >= appState.projects.length) {
-                    appState.activeProjectIndex = 0;
+                    appState.activeProjectIndex = appState.projects.length > 0 ? 0 : -1;
                 }
             } else {
-                appState.projects.push({ name: "Project 1", materials: { resinsNeeded: 0, metalsNeeded: 0, ceramicsNeeded: 0, chemicalsNeeded: 0, specialAlloysNeeded: 0, chiralCrystalsNeeded: 0 }});
+                 appState.projects = [];
+                 appState.activeProjectIndex = -1;
             }
+        }
+        
+        function showCalculatorView() {
+            document.getElementById('calculator-view').classList.remove('hidden');
+            document.getElementById('empty-state-view').classList.add('hidden');
+            document.getElementById('finishedBtn').disabled = false;
+            document.getElementById('resetBtn').disabled = false;
+        }
+
+        function showEmptyStateView() {
+            document.getElementById('calculator-view').classList.add('hidden');
+            document.getElementById('empty-state-view').classList.remove('hidden');
+            document.getElementById('finishedBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
         }
 
         function renderTabs() {
@@ -432,16 +477,29 @@
                 nameButton.className = 'sidebar-button-name';
                 nameButton.onclick = () => switchProject(index);
                 
+                const buttonsWrapper = document.createElement('div');
+                buttonsWrapper.className = 'flex items-center';
+
                 const renameButton = document.createElement('button');
-                renameButton.className = 'rename-btn';
-                renameButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
+                renameButton.className = 'icon-btn rename-btn';
+                renameButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
                 renameButton.onclick = (e) => {
-                    e.stopPropagation(); // prevent switchProject from firing
+                    e.stopPropagation();
                     openRenameProjectModal(index);
                 };
+                
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'icon-btn delete-btn';
+                deleteButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>`;
+                deleteButton.onclick = (e) => {
+                    e.stopPropagation();
+                    openDeleteProjectModal(index);
+                };
 
+                buttonsWrapper.appendChild(renameButton);
+                buttonsWrapper.appendChild(deleteButton);
                 container.appendChild(nameButton);
-                container.appendChild(renameButton);
+                container.appendChild(buttonsWrapper);
                 tabContainer.appendChild(container);
             });
         }
@@ -458,6 +516,14 @@
         }
 
         function switchProject(index) {
+            if (appState.projects.length === 0) {
+                appState.activeProjectIndex = -1;
+                showEmptyStateView();
+                renderTabs(); // Clear sidebar
+                return;
+            }
+            
+            showCalculatorView();
             if (appState.projects[appState.activeProjectIndex]) {
                  saveCurrentProjectNeeds();
             }
@@ -465,7 +531,6 @@
             loadProjectData(index);
             renderTabs();
             clearResults();
-            // Close sidebar on mobile after selection
             if (window.innerWidth < 768) {
                 closeSidebar();
             }
@@ -501,6 +566,7 @@
 
         function resetCalculator() {
             const project = appState.projects[appState.activeProjectIndex];
+            if (!project) return;
             Object.keys(project.materials).forEach(key => project.materials[key] = 0);
             loadProjectData(appState.activeProjectIndex);
             clearResults();
@@ -518,13 +584,22 @@
         const confirmRenameProjectBtn = document.getElementById('confirmRenameProjectBtn');
         const cancelRenameProjectBtn = document.getElementById('cancelRenameProjectBtn');
 
+        const deleteProjectModal = document.getElementById('deleteProjectModal');
+        const deleteProjectMessage = document.getElementById('deleteProjectMessage');
+        const confirmDeleteProjectBtn = document.getElementById('confirmDeleteProjectBtn');
+        const cancelDeleteProjectBtn = document.getElementById('cancelDeleteProjectBtn');
+
+        const confirmFinishedModal = document.getElementById('confirmFinishedModal');
+        const deleteAfterFinishCheckbox = document.getElementById('deleteAfterFinishCheckbox');
+        const confirmFinishedYesBtn = document.getElementById('confirmFinishedYesBtn');
+        const confirmFinishedNoBtn = document.getElementById('confirmFinishedNoBtn');
+
         function openAddProjectModal() {
             projectNameInput.value = `Project ${appState.projects.length + 1}`;
             addProjectModal.classList.remove('hidden');
             projectNameInput.focus();
             projectNameInput.select();
         }
-
         function closeAddProjectModal() { addProjectModal.classList.add('hidden'); }
 
         function openRenameProjectModal(index) {
@@ -534,11 +609,28 @@
             renameProjectInput.focus();
             renameProjectInput.select();
         }
-
         function closeRenameProjectModal() {
             renameProjectModal.classList.add('hidden');
             appState.projectToRenameIndex = null;
         }
+
+        function openDeleteProjectModal(index) {
+            appState.projectToDeleteIndex = index;
+            const projectName = appState.projects[index].name;
+            deleteProjectMessage.textContent = `Are you sure you want to delete "${projectName}"? This action cannot be undone.`;
+            deleteProjectModal.classList.remove('hidden');
+        }
+        function closeDeleteProjectModal() {
+            deleteProjectModal.classList.add('hidden');
+            appState.projectToDeleteIndex = null;
+        }
+        
+        function openFinishProjectModal() {
+            deleteAfterFinishCheckbox.checked = false;
+            confirmFinishedModal.classList.remove('hidden');
+        }
+        function closeFinishProjectModal() { confirmFinishedModal.classList.add('hidden'); }
+
 
         confirmAddProjectBtn.addEventListener('click', () => {
             const newProjectName = projectNameInput.value.trim();
@@ -546,9 +638,7 @@
                 appState.projects.push({ name: newProjectName, materials: { resinsNeeded: 0, metalsNeeded: 0, ceramicsNeeded: 0, chemicalsNeeded: 0, specialAlloysNeeded: 0, chiralCrystalsNeeded: 0 }});
                 closeAddProjectModal();
                 switchProject(appState.projects.length - 1);
-            } else {
-                showModalMessage("Project name cannot be empty.");
-            }
+            } else { showModalMessage("Project name cannot be empty."); }
         });
 
         confirmRenameProjectBtn.addEventListener('click', () => {
@@ -557,23 +647,60 @@
                 appState.projects[appState.projectToRenameIndex].name = newName;
                 saveAppState();
                 renderTabs();
+                loadProjectData(appState.activeProjectIndex); // update header if active project is renamed
                 closeRenameProjectModal();
-            } else {
-                 showModalMessage("Project name cannot be empty.");
+            } else { showModalMessage("Project name cannot be empty."); }
+        });
+
+        confirmDeleteProjectBtn.addEventListener('click', () => {
+            const indexToDelete = appState.projectToDeleteIndex;
+            if (indexToDelete === null) return;
+            
+            appState.projects.splice(indexToDelete, 1);
+            if (appState.activeProjectIndex >= indexToDelete) {
+                appState.activeProjectIndex = Math.max(0, appState.activeProjectIndex - 1);
             }
+            
+            closeDeleteProjectModal();
+            saveAppState();
+            switchProject(appState.activeProjectIndex);
+        });
+
+        confirmFinishedYesBtn.addEventListener('click', () => {
+            const shouldDelete = deleteAfterFinishCheckbox.checked;
+            const projectIndexToFinish = appState.activeProjectIndex;
+            const project = appState.projects[projectIndexToFinish];
+
+            if(!project) return;
+            
+            Object.keys(project.materials).forEach(neededKey => {
+                const haveKey = neededKey.replace('Needed', 'Have');
+                const needed = project.materials[neededKey] || 0;
+                appState.inventory[haveKey] = Math.max(0, (appState.inventory[haveKey] || 0) - needed);
+            });
+
+            if (shouldDelete) {
+                 appState.projects.splice(projectIndexToFinish, 1);
+                 if (appState.activeProjectIndex >= projectIndexToFinish) {
+                     appState.activeProjectIndex = Math.max(0, appState.activeProjectIndex - 1);
+                 }
+            } else {
+                 Object.keys(project.materials).forEach(key => project.materials[key] = 0);
+            }
+
+            closeFinishProjectModal();
+            saveAppState();
+            switchProject(appState.activeProjectIndex);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         cancelAddProjectBtn.addEventListener('click', closeAddProjectModal);
         cancelRenameProjectBtn.addEventListener('click', closeRenameProjectModal);
+        cancelDeleteProjectBtn.addEventListener('click', closeDeleteProjectModal);
+        confirmFinishedNoBtn.addEventListener('click', closeFinishProjectModal);
 
-        addProjectModal.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') confirmAddProjectBtn.click();
-            if (e.key === 'Escape') cancelAddProjectBtn.click();
-        });
-        renameProjectModal.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') confirmRenameProjectBtn.click();
-            if (e.key === 'Escape') cancelRenameProjectBtn.click();
-        });
+        addProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmAddProjectBtn.click(); if (e.key === 'Escape') cancelAddProjectBtn.click(); });
+        renameProjectModal.addEventListener('keydown', (e) => { if (e.key === 'Enter') confirmRenameProjectBtn.click(); if (e.key === 'Escape') cancelRenameProjectBtn.click(); });
 
         const addAmountModal = document.getElementById('addAmountModal');
         const amountToAddInput = document.getElementById('amountToAddInput');
@@ -587,7 +714,6 @@
             addAmountModal.classList.remove('hidden');
             amountToAddInput.focus();
         }
-
         function closeAddAmountModal() { addAmountModal.classList.add('hidden'); }
 
         confirmAddAmountBtn.addEventListener('click', () => {
@@ -595,40 +721,19 @@
             if (targetInput) {
                 const amount = parseInt(amountToAddInput.value) || 0;
                 targetInput.value = (parseInt(targetInput.value) || 0) + amount;
-                targetInput.dispatchEvent(new Event('input')); // Trigger input event to save state
+                targetInput.dispatchEvent(new Event('input'));
             }
             closeAddAmountModal();
         });
 
         cancelAddAmountBtn.addEventListener('click', closeAddAmountModal);
 
-        const confirmFinishedModal = document.getElementById('confirmFinishedModal');
-        document.getElementById('finishedBtn').addEventListener('click', () => confirmFinishedModal.classList.remove('hidden'));
-        document.getElementById('confirmFinishedNoBtn').addEventListener('click', () => confirmFinishedModal.classList.add('hidden'));
-        document.getElementById('confirmFinishedYesBtn').addEventListener('click', () => {
-            const project = appState.projects[appState.activeProjectIndex];
-            Object.keys(project.materials).forEach(neededKey => {
-                const haveKey = neededKey.replace('Needed', 'Have');
-                const needed = project.materials[neededKey] || 0;
-                appState.inventory[haveKey] = Math.max(0, (appState.inventory[haveKey] || 0) - needed);
-                project.materials[neededKey] = 0;
-            });
-            loadProjectData(appState.activeProjectIndex);
-            clearResults();
-            saveAppState();
-            confirmFinishedModal.classList.add('hidden');
-        });
-        
-        // Sidebar toggle logic
-        const menuToggle = document.getElementById('menu-toggle');
         const sidebar = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
-
         const openSidebar = () => {
             sidebar.classList.remove('-translate-x-full');
             sidebarOverlay.classList.remove('hidden');
         };
-
         const closeSidebar = () => {
             sidebar.classList.add('-translate-x-full');
             sidebarOverlay.classList.add('hidden');
@@ -637,22 +742,19 @@
         // Event Listeners Setup
         document.addEventListener('DOMContentLoaded', () => {
             loadAppState();
-            renderTabs();
-            loadProjectData(appState.activeProjectIndex);
-            clearResults();
+            switchProject(appState.activeProjectIndex); // Initial load
             
-            menuToggle.addEventListener('click', (e) => {
+            document.getElementById('menu-toggle').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (sidebar.classList.contains('-translate-x-full')) {
-                    openSidebar();
-                } else {
-                    closeSidebar();
-                }
+                if (sidebar.classList.contains('-translate-x-full')) openSidebar();
+                else closeSidebar();
             });
-
+            
+            document.getElementById('emptyStateAddBtn').addEventListener('click', openAddProjectModal);
             sidebarOverlay.addEventListener('click', closeSidebar);
 
             document.getElementById('addProjectBtn').addEventListener('click', openAddProjectModal);
+            document.getElementById('finishedBtn').addEventListener('click', openFinishProjectModal);
             document.getElementById('calculateBtn').addEventListener('click', () => {
                 const materials = getMaterialInputs();
                 const values = {};
