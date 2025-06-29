@@ -28,14 +28,6 @@ The Death Stranding Material Unit Calculator helps you efficiently plan your res
 * **Optimal Unit Calculation**: Calculates the best breakdown of units (e.g., containers of 400, 200, 100) for the `Net Required` amount to meet or exceed your goal.
 * **Waste Tracking**: Clearly displays any "wasted" material from using larger containers, helping you manage resources efficiently.
 
-### Modern UI & UX
-* **Two-Column Layout**: A clean layout with a project sidebar for easy navigation and a main calculator view for data entry.
-* **Responsive Design**: The interface is optimized for desktop, tablet, and mobile.
-* **Collapsible Sidebar**: On mobile devices, the sidebar is hidden by default and can be toggled with a floating menu button, providing a focused, uncluttered view.
-* **Active Project Display**: The name of the currently selected project is always displayed at the top of the calculator.
-* **Empty State**: A helpful starting screen with a large "+ Add Project" button appears when no projects have been created yet.
-* **"Add Amount" Functionality**: Each input field has a `+` button that opens a dialog, allowing you to quickly add a specific quantity to its current value.
-
 ### Workflow Tools
 * **"Project Finished" with Delete Option**: When a project is complete, a confirmation modal allows you to deduct the required materials from your inventory and gives you the option to **simultaneously delete the project**.
 * **Reset Needed Materials**: A dedicated button clears *only* the "Total Needed" fields for the active project, allowing you to plan a new set of requirements without affecting your inventory.
