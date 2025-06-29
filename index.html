@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Unit Calculator</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Light gray background */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e0e0e0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-200">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Material Unit Calculator</h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Resins Input -->
+            <div class="flex flex-col">
+                <label for="resins" class="text-lg font-medium text-gray-700 mb-2">Total Resins Needed:</label>
+                <input type="number" id="resins" placeholder="e.g., 200" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+            </div>
+
+            <!-- Metals Input -->
+            <div class="flex flex-col">
+                <label for="metals" class="text-lg font-medium text-gray-700 mb-2">Total Metals Needed:</label>
+                <input type="number" id="metals" placeholder="e.g., 550" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+            </div>
+
+            <!-- Ceramics Input -->
+            <div class="flex flex-col">
+                <label for="ceramics" class="text-lg font-medium text-gray-700 mb-2">Total Ceramics Needed:</label>
+                <input type="number" id="ceramics" placeholder="e.g., 350" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+            </div>
+
+            <!-- Chemicals Input -->
+            <div class="flex flex-col">
+                <label for="chemicals" class="text-lg font-medium text-gray-700 mb-2">Total Chemicals Needed:</label>
+                <input type="number" id="chemicals" placeholder="e.g., 180" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+            </div>
+
+            <!-- Special Alloys Input -->
+            <div class="flex flex-col md:col-span-2">
+                <label for="specialAlloys" class="text-lg font-medium text-gray-700 mb-2">Total Special Alloys Needed:</label>
+                <input type="number" id="specialAlloys" placeholder="e.g., 700" class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" min="0">
+            </div>
+        </div>
+
+        <button id="calculateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-xl shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
+            Calculate Units
+        </button>
+
+        <!-- New Reset Button -->
+        <button id="resetBtn" class="w-full bg-gray-400 hover:bg-gray-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg mt-4 transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-75">
+            Reset
+        </button>
+
+        <div id="results" class="mt-8 space-y-4">
+            <!-- Results will be displayed here -->
+            <div id="resinsResult" class="bg-blue-50 p-4 rounded-lg border border-blue-200 hidden"></div>
+            <div id="metalsResult" class="bg-green-50 p-4 rounded-lg border border-green-200 hidden"></div>
+            <div id="ceramicsResult" class="bg-yellow-50 p-4 rounded-lg border border-yellow-200 hidden"></div>
+            <div id="chemicalsResult" class="bg-purple-50 p-4 rounded-lg border border-purple-200 hidden"></div>
+            <div id="specialAlloysResult" class="bg-red-50 p-4 rounded-lg border border-red-200 hidden"></div>
+        </div>
+
+        <!-- Custom Modal for Messages -->
+        <div id="messageModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                <p id="modalMessage" class="text-gray-800 text-lg mb-4"></p>
+                <button id="modalCloseBtn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to display messages in a custom modal instead of alert()
+        function showModalMessage(message) {
+            const modal = document.getElementById('messageModal');
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = message;
+            modal.classList.remove('hidden');
+            document.getElementById('modalCloseBtn').onclick = () => {
+                modal.classList.add('hidden');
+            };
+        }
+
+        // Define unit sizes for each material type
+        const unitSizes = {
+            resins: [320, 160, 80, 40],
+            metals: [400, 200, 100, 50],
+            ceramics: [320, 160, 80, 40],
+            chemicals: [240, 120, 60, 30],
+            specialAlloys: [480, 240, 120, 60]
+        };
+
+        // Function to calculate units for a given material
+        function calculateUnits(totalAmount, sizes) {
+            let remaining = totalAmount;
+            const unitsBreakdown = {}; // Object to store the count for each unit size
+
+            // Iterate through sizes from largest to smallest (assuming sizes are sorted descending)
+            for (const size of sizes) {
+                if (remaining >= size) {
+                    const count = Math.floor(remaining / size); // Number of units of this size
+                    unitsBreakdown[size] = count; // Store the count
+                    remaining -= count * size; // Subtract the amount covered by these units
+                } else {
+                    unitsBreakdown[size] = 0; // If current size is too large, 0 units of this size
+                }
+            }
+            return { units: unitsBreakdown, remaining: remaining };
+        }
+
+        // Function to format the results for display
+        function formatResults(materialDisplayName, result) {
+            // Map display names to the actual keys in unitSizes to ensure correct lookup
+            const keyMap = {
+                "Resins": "resins",
+                "Metals": "metals",
+                "Ceramics": "ceramics",
+                "Chemicals": "chemicals",
+                "Special Alloys": "specialAlloys"
+            };
+            const materialKey = keyMap[materialDisplayName]; // Get the correct key
+
+            if (!materialKey || !unitSizes[materialKey]) {
+                console.error(`Invalid material name or missing unit sizes: ${materialDisplayName}`);
+                return `<p class="text-red-600">Error: Could not retrieve unit sizes for ${materialDisplayName}.</p>`;
+            }
+
+            let output = `<p class="text-lg font-semibold text-gray-800">${materialDisplayName} Units:</p>`;
+            let hasUnits = false;
+            // Iterate through the unit sizes defined for the material to ensure order
+            const sizesForMaterial = unitSizes[materialKey]; // Use the correct key here
+
+            for (const size of sizesForMaterial) {
+                const count = result.units[size] || 0; // Get count, default to 0 if not present
+                if (count > 0) {
+                    output += `<p class="text-gray-700 ml-4">${count} x ${size} units</p>`;
+                    hasUnits = true;
+                }
+            }
+
+            if (!hasUnits) {
+                output += `<p class="text-gray-700 ml-4">No units needed (or total is 0).</p>`;
+            }
+
+            if (result.remaining > 0) {
+                output += `<p class="text-red-600 ml-4 font-semibold">Remaining: ${result.remaining} units (cannot be perfectly fit by available unit sizes).</p>`;
+            }
+            return output;
+        }
+
+        // Function to reset all inputs and results
+        function resetCalculator() {
+            document.getElementById('resins').value = '';
+            document.getElementById('metals').value = '';
+            document.getElementById('ceramics').value = '';
+            document.getElementById('chemicals').value = '';
+            document.getElementById('specialAlloys').value = '';
+
+            const resultDivs = [
+                document.getElementById('resinsResult'),
+                document.getElementById('metalsResult'),
+                document.getElementById('ceramicsResult'),
+                document.getElementById('chemicalsResult'),
+                document.getElementById('specialAlloysResult')
+            ];
+
+            resultDivs.forEach(div => {
+                div.innerHTML = ''; // Clear content
+                div.classList.add('hidden'); // Hide the div
+            });
+        }
+
+
+        // Main calculation function
+        document.getElementById('calculateBtn').addEventListener('click', () => {
+            const resinsInput = parseInt(document.getElementById('resins').value) || 0;
+            const metalsInput = parseInt(document.getElementById('metals').value) || 0;
+            const ceramicsInput = parseInt(document.getElementById('ceramics').value) || 0;
+            const chemicalsInput = parseInt(document.getElementById('chemicals').value) || 0;
+            const specialAlloysInput = parseInt(document.getElementById('specialAlloys').value) || 0;
+
+            // Get result display elements
+            const resinsResultDiv = document.getElementById('resinsResult');
+            const metalsResultDiv = document.getElementById('metalsResult');
+            const ceramicsResultDiv = document.getElementById('ceramicsResult');
+            const chemicalsResultDiv = document.getElementById('chemicalsResult');
+            const specialAlloysResultDiv = document.getElementById('specialAlloysResult');
+
+            // Hide all results initially
+            [resinsResultDiv, metalsResultDiv, ceramicsResultDiv, chemicalsResultDiv, specialAlloysResultDiv].forEach(div => div.classList.add('hidden'));
+
+            // Perform calculations
+            const resinsCalc = calculateUnits(resinsInput, unitSizes.resins);
+            const metalsCalc = calculateUnits(metalsInput, unitSizes.metals);
+            const ceramicsCalc = calculateUnits(ceramicsInput, unitSizes.ceramics);
+            const chemicalsCalc = calculateUnits(chemicalsInput, unitSizes.chemicals);
+            const specialAlloysCalc = calculateUnits(specialAlloysInput, unitSizes.specialAlloys);
+
+            // Display results for each material if input > 0 or if there's a remaining amount
+            if (resinsInput > 0 || resinsCalc.remaining > 0) {
+                resinsResultDiv.innerHTML = formatResults("Resins", resinsCalc);
+                resinsResultDiv.classList.remove('hidden');
+            }
+            if (metalsInput > 0 || metalsCalc.remaining > 0) {
+                metalsResultDiv.innerHTML = formatResults("Metals", metalsCalc);
+                metalsResultDiv.classList.remove('hidden');
+            }
+            if (ceramicsInput > 0 || ceramicsCalc.remaining > 0) {
+                ceramicsResultDiv.innerHTML = formatResults("Ceramics", ceramicsCalc);
+                ceramicsResultDiv.classList.remove('hidden');
+            }
+            if (chemicalsInput > 0 || chemicalsCalc.remaining > 0) {
+                chemicalsResultDiv.innerHTML = formatResults("Chemicals", chemicalsCalc);
+                chemicalsResultDiv.classList.remove('hidden');
+            }
+            if (specialAlloysInput > 0 || specialAlloysCalc.remaining > 0) {
+                specialAlloysResultDiv.innerHTML = formatResults("Special Alloys", specialAlloysCalc);
+                specialAlloysResultDiv.classList.remove('hidden');
+            }
+
+            // If no input was provided for any field, show a message
+            if (resinsInput === 0 && metalsInput === 0 && ceramicsInput === 0 && chemicalsInput === 0 && specialAlloysInput === 0) {
+                showModalMessage("Please enter an amount for at least one material to calculate units.");
+            }
+        });
+
+        // Event listener for the new reset button
+        document.getElementById('resetBtn').addEventListener('click', resetCalculator);
+    </script>
+</body>
+</html>
