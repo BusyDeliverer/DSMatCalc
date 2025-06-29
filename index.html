@@ -43,25 +43,40 @@
             margin: 0 2px;
         }
         /* Styles for the sidebar project buttons */
-        .sidebar-button {
+        .sidebar-button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 0.75rem 1rem;
             border-radius: 0.5rem;
             width: 100%;
-            text-align: left;
-            font-weight: 500;
             cursor: pointer;
             transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+            margin-bottom: 0.5rem;
             border: 1px solid transparent;
             background-color: transparent; /* Inactive state */
             color: #374151; /* gray-700 */
         }
-        .sidebar-button.active {
+        .sidebar-button-container.active {
             background-color: #3b82f6; /* blue-500 */
             color: white;
             font-weight: 600;
         }
-        .sidebar-button:hover:not(.active) {
+        .sidebar-button-container:hover:not(.active) {
             background-color: #e5e7eb; /* gray-200 */
+        }
+        .sidebar-button-name {
+            flex-grow: 1;
+            text-align: left;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-weight: 500;
+        }
+        .sidebar-button-container.active .sidebar-button-name {
+            color: white;
+            font-weight: 600;
         }
         .rename-btn {
             background: transparent;
@@ -70,41 +85,52 @@
             padding: 0.25rem;
             border-radius: 0.25rem;
             color: #9ca3af; /* gray-400 */
+            flex-shrink: 0;
+            margin-left: 0.5rem;
         }
         .rename-btn:hover {
             background-color: #d1d5db; /* gray-300 */
             color: #1f2937; /* gray-800 */
         }
-        .sidebar-button.active .rename-btn {
+        .sidebar-button-container.active .rename-btn {
             color: #bfdbfe; /* blue-200 */
         }
-         .sidebar-button.active .rename-btn:hover {
+         .sidebar-button-container.active .rename-btn:hover {
             background-color: #60a5fa; /* blue-400 */
             color: white;
         }
     </style>
 </head>
 <body class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+    
+    <!-- Mobile Menu Button -->
+    <button id="menu-toggle" class="md:hidden fixed bottom-4 right-4 z-40 p-2 bg-blue-500 text-white rounded-full shadow-lg">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+        </svg>
+    </button>
+    
+    <!-- Sidebar Overlay (mobile only) -->
+    <div id="sidebar-overlay" class="md:hidden fixed inset-0 bg-black bg-opacity-50 z-20 hidden"></div>
 
     <!-- Main container with two-column layout -->
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-6xl border border-gray-200 flex flex-col md:flex-row min-h-[80vh]">
+    <div class="bg-white rounded-2xl shadow-xl w-full max-w-6xl border border-gray-200 flex min-h-[90vh]">
 
         <!-- Sidebar for Projects -->
-        <div id="sidebar" class="w-full md:w-1/4 bg-gray-50 p-6 rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none border-b md:border-b-0 md:border-r border-gray-200 flex flex-col">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-800">Projects</h2>
-                <button id="addProjectBtn" class="bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-1 px-3 rounded-lg shadow-sm transition duration-200 ease-in-out text-sm">
-                    + New
-                </button>
-            </div>
+        <div id="sidebar" class="fixed inset-y-0 left-0 z-30 w-72 bg-gray-50 p-6 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:relative md:w-1/4 md:translate-x-0 md:border-r border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Projects</h2>
+            <button id="addProjectBtn" class="w-full bg-blue-100 hover:bg-blue-200 text-blue-800 font-semibold py-2 px-4 rounded-lg shadow-sm transition duration-200 ease-in-out mb-4">
+                + Add
+            </button>
             <div id="projectTabsContainer" class="flex-grow">
                 <!-- Project buttons will be rendered here by JavaScript -->
             </div>
         </div>
         
         <!-- Main Content Area for the Calculator -->
-        <div class="w-full md:w-3/4 p-8 overflow-y-auto">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Material Unit Calculator</h1>
+        <div class="w-full p-8 overflow-y-auto">
+            <h1 class="text-3xl font-bold text-gray-800 text-center">Material Unit Calculator</h1>
+            <h2 id="currentProjectName" class="text-xl font-semibold text-gray-500 mb-6 text-center"></h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <!-- Resins Inputs -->
@@ -396,18 +422,18 @@
             tabContainer.innerHTML = '';
             appState.projects.forEach((project, index) => {
                 const container = document.createElement('div');
-                container.className = 'flex justify-between items-center sidebar-button';
+                container.className = 'sidebar-button-container';
                 if (index === appState.activeProjectIndex) {
                     container.classList.add('active');
                 }
                 
                 const nameButton = document.createElement('button');
                 nameButton.textContent = project.name;
-                nameButton.className = 'flex-grow text-left';
+                nameButton.className = 'sidebar-button-name';
                 nameButton.onclick = () => switchProject(index);
                 
                 const renameButton = document.createElement('button');
-                renameButton.className = 'rename-btn flex-shrink-0 ml-2';
+                renameButton.className = 'rename-btn';
                 renameButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"/></svg>`;
                 renameButton.onclick = (e) => {
                     e.stopPropagation(); // prevent switchProject from firing
@@ -439,11 +465,16 @@
             loadProjectData(index);
             renderTabs();
             clearResults();
+            // Close sidebar on mobile after selection
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
         }
 
         function loadProjectData(index) {
             const project = appState.projects[index];
             if (!project) return;
+            document.getElementById('currentProjectName').textContent = project.name;
             getMaterialInputs().forEach(material => {
                 const neededId = material.needed.id;
                 const haveId = material.have.id;
@@ -587,6 +618,21 @@
             saveAppState();
             confirmFinishedModal.classList.add('hidden');
         });
+        
+        // Sidebar toggle logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        const openSidebar = () => {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+        };
+
+        const closeSidebar = () => {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        };
 
         // Event Listeners Setup
         document.addEventListener('DOMContentLoaded', () => {
@@ -594,6 +640,17 @@
             renderTabs();
             loadProjectData(appState.activeProjectIndex);
             clearResults();
+            
+            menuToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (sidebar.classList.contains('-translate-x-full')) {
+                    openSidebar();
+                } else {
+                    closeSidebar();
+                }
+            });
+
+            sidebarOverlay.addEventListener('click', closeSidebar);
 
             document.getElementById('addProjectBtn').addEventListener('click', openAddProjectModal);
             document.getElementById('calculateBtn').addEventListener('click', () => {
